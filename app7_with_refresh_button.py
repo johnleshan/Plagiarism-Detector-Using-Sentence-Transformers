@@ -61,9 +61,6 @@ def upload_files():
     """Upload multiple files and convert them to .txt in the Pending folder."""
     filepaths = askopenfilenames(
         filetypes=[
-            ("Text Files", "*.txt"),
-            ("PDF Files", "*.pdf"),
-            ("Word Documents", "*.docx"),
             ("All files", "*.*")
         ]
     )
@@ -178,14 +175,12 @@ window.title("Plagiarism Checker System")
 # FRONT END DESIGN
 # 1st Frame containing the welcome and intro msg label widgets.
 welcome_frm = customtkinter.CTkFrame(window)
-welcome_msg = "Welcome to state of the art Plagiarism Checker System"
+welcome_msg = "Welcome to the state of the art Plagiarism Checker System"
 welcome_msg_variable = tk.StringVar(welcome_frm, welcome_msg)
 welcome_lbl = customtkinter.CTkLabel(welcome_frm, textvariable=welcome_msg_variable,
-                                     height=70, corner_radius=20, 
+                                     height=100, corner_radius=20, 
                                      text_color="yellow", font=("Comic Sans MS bold", 30))
 welcome_lbl.grid(row=0, column=0, padx=20, sticky="n")
-
-welcome_frm.grid(row=0, column=0, padx=(50, 50), pady=(5, 10), sticky="n")
 
 # 3rd Frame contains the buttons to help with the functionality of the whole app.
 button_frm = customtkinter.CTkFrame(window)
@@ -212,8 +207,9 @@ btn_open_report.grid(row=0, column=3, padx=(30, 0), sticky="nwne")
 btn_reset = customtkinter.CTkButton(
     button_frm, corner_radius=30, hover_color="Red", text="RESET", command=reset_application
 )
-btn_reset.grid(row=0, column=4, padx=(30, 0), sticky="nwne")
+btn_reset.grid(row=0, column=4, padx=(30, 170), sticky="nwne")
 
-button_frm.grid(row=0, column=0, padx=(5, 5), pady=(15, 160), sticky="swse")
+welcome_frm.grid(row=0, column=0, padx=(50, 40), pady=(155, 30), sticky="se")
+button_frm.grid(row=0, column=0, padx=(50, 40), pady=(0, 0), sticky="se")
 
 window.mainloop()

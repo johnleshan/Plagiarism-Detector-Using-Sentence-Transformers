@@ -1,0 +1,109 @@
+Assignment 1,Assignment 2,Similarity Score,Plagiarism Status
+Alloys_ML.txt,Collins_machine learning question 1.txt,0.43,Clean
+Alloys_ML.txt,COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,0.09,Clean
+Alloys_ML.txt,cv_Phoenix.txt,0.00,Clean
+Alloys_ML.txt,Dan_Machine learning assignment_035407.txt,0.42,Clean
+Alloys_ML.txt,example_pdf.txt,0.17,Clean
+Alloys_ML.txt,example_pdf.txt,0.17,Clean
+Alloys_ML.txt,fatma.txt,0.09,Clean
+Alloys_ML.txt,HCI_Group_Assignment[1].txt,0.39,Clean
+Alloys_ML.txt,John Com 4139-1 CAT 1.txt,0.31,Clean
+Alloys_ML.txt,John COM 4141 Assignment You.com.txt,0.32,Clean
+Alloys_ML.txt,John COM 4141 cat 1.txt,0.34,Clean
+Alloys_ML.txt,john.txt,0.06,Clean
+Alloys_ML.txt,juma.txt,0.10,Clean
+Alloys_ML.txt,Machine Learning Continuous Assessment Test.txt,0.38,Clean
+Alloys_ML.txt,Machine Learning.txt,0.82,Flagged
+Alloys_ML.txt,output.txt,0.17,Clean
+Alloys_ML.txt,Startup Guide - Harvard University-1.txt,0.43,Clean
+Alloys_ML.txt,stmpd-studio1.txt,0.03,Clean
+Alloys_ML.txt,Collins_machine learning question 1.txt,0.43,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,Collins_machine learning question 1.txt,0.07,Clean
+Collins_machine learning question 1.txt,cv_Phoenix.txt,0.00,Clean
+Collins_machine learning question 1.txt,Dan_Machine learning assignment_035407.txt,0.35,Clean
+Collins_machine learning question 1.txt,example_pdf.txt,0.12,Clean
+Collins_machine learning question 1.txt,example_pdf.txt,0.12,Clean
+Collins_machine learning question 1.txt,fatma.txt,0.08,Clean
+Collins_machine learning question 1.txt,HCI_Group_Assignment[1].txt,0.30,Clean
+Collins_machine learning question 1.txt,John Com 4139-1 CAT 1.txt,0.23,Clean
+Collins_machine learning question 1.txt,John COM 4141 Assignment You.com.txt,0.29,Clean
+Collins_machine learning question 1.txt,John COM 4141 cat 1.txt,0.32,Clean
+Collins_machine learning question 1.txt,john.txt,0.06,Clean
+Collins_machine learning question 1.txt,juma.txt,0.09,Clean
+Collins_machine learning question 1.txt,Machine Learning Continuous Assessment Test.txt,0.46,Clean
+Collins_machine learning question 1.txt,Machine Learning.txt,0.63,Clean
+Collins_machine learning question 1.txt,output.txt,0.12,Clean
+Collins_machine learning question 1.txt,Startup Guide - Harvard University-1.txt,0.29,Clean
+Collins_machine learning question 1.txt,stmpd-studio1.txt,0.03,Clean
+Alloys_ML.txt,COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,0.09,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,Collins_machine learning question 1.txt,0.07,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,cv_Phoenix.txt,0.00,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,Dan_Machine learning assignment_035407.txt,0.09,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,example_pdf.txt,0.06,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,example_pdf.txt,0.06,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,fatma.txt,0.11,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,HCI_Group_Assignment[1].txt,0.14,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,John Com 4139-1 CAT 1.txt,0.07,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,John COM 4141 Assignment You.com.txt,0.09,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,John COM 4141 cat 1.txt,0.09,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,john.txt,0.02,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,juma.txt,0.06,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,Machine Learning Continuous Assessment Test.txt,0.08,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,Machine Learning.txt,0.11,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,output.txt,0.06,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,Startup Guide - Harvard University-1.txt,0.12,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,stmpd-studio1.txt,0.03,Clean
+Alloys_ML.txt,cv_Phoenix.txt,0.00,Clean
+Collins_machine learning question 1.txt,cv_Phoenix.txt,0.00,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,cv_Phoenix.txt,0.00,Clean
+Dan_Machine learning assignment_035407.txt,cv_Phoenix.txt,0.00,Clean
+cv_Phoenix.txt,example_pdf.txt,0.00,Clean
+cv_Phoenix.txt,example_pdf.txt,0.00,Clean
+cv_Phoenix.txt,fatma.txt,0.00,Clean
+HCI_Group_Assignment[1].txt,cv_Phoenix.txt,0.00,Clean
+John Com 4139-1 CAT 1.txt,cv_Phoenix.txt,0.00,Clean
+John COM 4141 Assignment You.com.txt,cv_Phoenix.txt,0.00,Clean
+John COM 4141 cat 1.txt,cv_Phoenix.txt,0.00,Clean
+cv_Phoenix.txt,john.txt,0.00,Clean
+cv_Phoenix.txt,juma.txt,0.00,Clean
+Machine Learning Continuous Assessment Test.txt,cv_Phoenix.txt,0.00,Clean
+Machine Learning.txt,cv_Phoenix.txt,0.00,Clean
+cv_Phoenix.txt,output.txt,0.00,Clean
+Startup Guide - Harvard University-1.txt,cv_Phoenix.txt,0.00,Clean
+cv_Phoenix.txt,stmpd-studio1.txt,0.00,Clean
+Alloys_ML.txt,Dan_Machine learning assignment_035407.txt,0.42,Clean
+Collins_machine learning question 1.txt,Dan_Machine learning assignment_035407.txt,0.35,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,Dan_Machine learning assignment_035407.txt,0.09,Clean
+Dan_Machine learning assignment_035407.txt,cv_Phoenix.txt,0.00,Clean
+Dan_Machine learning assignment_035407.txt,example_pdf.txt,0.17,Clean
+Dan_Machine learning assignment_035407.txt,example_pdf.txt,0.17,Clean
+Dan_Machine learning assignment_035407.txt,fatma.txt,0.07,Clean
+Dan_Machine learning assignment_035407.txt,HCI_Group_Assignment[1].txt,0.42,Clean
+Dan_Machine learning assignment_035407.txt,John Com 4139-1 CAT 1.txt,0.36,Clean
+Dan_Machine learning assignment_035407.txt,John COM 4141 Assignment You.com.txt,0.28,Clean
+Dan_Machine learning assignment_035407.txt,John COM 4141 cat 1.txt,0.29,Clean
+Dan_Machine learning assignment_035407.txt,john.txt,0.04,Clean
+Dan_Machine learning assignment_035407.txt,juma.txt,0.07,Clean
+Dan_Machine learning assignment_035407.txt,Machine Learning Continuous Assessment Test.txt,0.33,Clean
+Dan_Machine learning assignment_035407.txt,Machine Learning.txt,0.78,Flagged
+Dan_Machine learning assignment_035407.txt,output.txt,0.17,Clean
+Dan_Machine learning assignment_035407.txt,Startup Guide - Harvard University-1.txt,0.40,Clean
+Dan_Machine learning assignment_035407.txt,stmpd-studio1.txt,0.03,Clean
+Alloys_ML.txt,example_pdf.txt,0.17,Clean
+Collins_machine learning question 1.txt,example_pdf.txt,0.12,Clean
+COM 4137-1 MOBILE SYSTEMS PROGRAMMING-2.txt,example_pdf.txt,0.06,Clean
+cv_Phoenix.txt,example_pdf.txt,0.00,Clean
+Dan_Machine learning assignment_035407.txt,example_pdf.txt,0.17,Clean
+example_pdf.txt,example_pdf.txt,1.00,Flagged
+example_pdf.txt,fatma.txt,0.07,Clean
+HCI_Group_Assignment[1].txt,example_pdf.txt,0.20,Clean
+John Com 4139-1 CAT 1.txt,example_pdf.txt,0.17,Clean
+John COM 4141 Assignment You.com.txt,example_pdf.txt,0.16,Clean
+John COM 4141 cat 1.txt,example_pdf.txt,0.16,Clean
+example_pdf.txt,john.txt,0.03,Clean
+example_pdf.txt,juma.txt,0.04,Clean
+Machine Learning Continuous Assessment Test.txt,example_pdf.txt,0.11,Clean
+Machine Learning.txt,example_pdf.txt,0.21,Clean
+example_pdf.txt,output.txt,1.00,Flagged
+Startup Guide - Harvard University-1.txt,example_pdf.txt,0.24,Clean
+example_pdf.txt,stmpd-studio1.txt,0.03,Clean
