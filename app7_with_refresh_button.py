@@ -85,32 +85,84 @@ def check_uploaded_files_plagiarism():
         messagebox.showwarning("No Files", "No files have been uploaded.")
         return
 
-    notes = [open(file, encoding='utf-8').read().strip() for file in uploaded_files]
-    if not notes or all(len(note.split()) == 0 for note in notes):
-        messagebox.showerror("Empty Files", "Uploaded files are empty or contain no meaningful content.")
-        return
+    try:
+        # Create the "corrupt documents" folder if it doesn't exist
+        corrupt_folder = os.path.join("Pending", "corrupt documents")
+        if not os.path.exists(corrupt_folder):
+            os.makedirs(corrupt_folder)
 
-    vectors = TfidfVectorizer().fit_transform(notes).toarray()
-    s_vectors = list(zip(uploaded_files, vectors))
-    global plagiarism_results
-    plagiarism_results = []
+        # Read the content of the uploaded files
+        notes = []
+        valid_files = []
+        corrupted_files = []
 
-    for student_a, text_vector_a in s_vectors:
-        new_vectors = s_vectors.copy()
-        current_index = new_vectors.index((student_a, text_vector_a))
-        del new_vectors[current_index]
-        for student_b, text_vector_b in new_vectors:
-            sim_score = cosine_similarity([text_vector_a, text_vector_b])[0][1]
-            student_pair = sorted((os.path.basename(student_a), os.path.basename(student_b)))
-            score = (student_pair[0], student_pair[1], sim_score)
-            plagiarism_results.append({
-                "Assignment 1": student_pair[0],
-                "Assignment 2": student_pair[1],
-                "Similarity Score": f"{sim_score:.2f}",
-                "Plagiarism Status": "Flagged" if sim_score >= 0.7 else "Clean"
-            })
+        for file in uploaded_files:
+            try:
+                with open(file, encoding='utf-8') as f:
+                    content = f.read().strip()
+                    if not content:
+                        # Move the empty file to the "corrupt documents" folder
+                        file_name = os.path.basename(file)
+                        corrupt_file_path = os.path.join(corrupt_folder, file_name)
+                        os.rename(file, corrupt_file_path)
+                        corrupted_files.append(file_name)
+                        messagebox.showwarning("Empty File", f"The file {file_name} is empty and has been moved to 'corrupt documents'.")
+                        continue  # Skip this file and continue with the next one
+                    notes.append(content)
+                    valid_files.append(file)
+            except Exception as e:
+                # Handle file access errors (e.g., file is open in another program)
+                file_name = os.path.basename(file)
+                corrupt_file_path = os.path.join(corrupt_folder, file_name)
+                os.rename(file, corrupt_file_path)
+                corrupted_files.append(file_name)
+                messagebox.showwarning("File Access Error", f"The file {file_name} could not be accessed and has been moved to 'corrupt documents'. Error: {e}")
 
-    messagebox.showinfo("Plagiarism Check Complete", "Plagiarism check completed successfully.")
+        # Check if all files are empty or corrupted
+        if not notes:
+            messagebox.showerror("Empty Files", "All uploaded files are empty, corrupted, or contain no meaningful content.")
+            return
+
+        # Ask the user if they want to continue with the remaining files
+        if len(valid_files) < len(uploaded_files):
+            continue_check = messagebox.askyesno("Continue?", "Some files were corrupted or empty and moved to 'corrupt documents'. Do you want to continue with the remaining files?")
+            if not continue_check:
+                return
+
+        # Perform TF-IDF vectorization and cosine similarity calculation
+        vectors = TfidfVectorizer().fit_transform(notes).toarray()
+        s_vectors = list(zip(valid_files, vectors))
+        global plagiarism_results
+        plagiarism_results = []
+
+        for student_a, text_vector_a in s_vectors:
+            new_vectors = s_vectors.copy()
+            # Find the index of the current student_a in new_vectors using the file path (student_a)
+            current_index = next(i for i, (file_path, _) in enumerate(new_vectors) if file_path == student_a)
+            del new_vectors[current_index]
+            for student_b, text_vector_b in new_vectors:
+                sim_score = cosine_similarity([text_vector_a, text_vector_b])[0][1]
+                student_pair = sorted((os.path.basename(student_a), os.path.basename(student_b)))
+                plagiarism_results.append({
+                    "Assignment 1": student_pair[0],
+                    "Assignment 2": student_pair[1],
+                    "Similarity Score": f"{sim_score:.2f}",
+                    "Plagiarism Status": "Flagged" if sim_score >= 0.7 else "Clean"
+                })
+
+        # Notify the user about corrupted files and successful plagiarism check
+        if corrupted_files:
+            messagebox.showinfo(
+                "Plagiarism Check Complete",
+                f"Plagiarism check completed successfully.\n\n"
+                f"The following files were corrupted or empty and moved to 'corrupt documents':\n"
+                f"{', '.join(corrupted_files)}"
+            )
+        else:
+            messagebox.showinfo("Plagiarism Check Complete", "Plagiarism check completed successfully.")
+
+    except Exception as e:
+        messagebox.showerror("Error", f"An error occurred during the plagiarism check: {e}")
 
 # Function to export the plagiarism report
 def export_report():
@@ -172,6 +224,9 @@ window = customtkinter.CTk()
 customtkinter.set_appearance_mode("dark")  # Always open the app in dark mode
 window.title("Plagiarism Checker System")
 
+# Set the window to maximized state (covers the screen but leaves the taskbar visible)
+window.state("zoomed")
+
 # FRONT END DESIGN
 # 1st Frame containing the welcome and intro msg label widgets.
 welcome_frm = customtkinter.CTkFrame(window)
@@ -180,36 +235,42 @@ welcome_msg_variable = tk.StringVar(welcome_frm, welcome_msg)
 welcome_lbl = customtkinter.CTkLabel(welcome_frm, textvariable=welcome_msg_variable,
                                      height=100, corner_radius=20, 
                                      text_color="yellow", font=("Comic Sans MS bold", 30))
-welcome_lbl.grid(row=0, column=0, padx=20, sticky="n")
+welcome_lbl.grid(row=0, column=0, padx=180, pady=(20, 0), sticky="nsew")
 
 # 3rd Frame contains the buttons to help with the functionality of the whole app.
 button_frm = customtkinter.CTkFrame(window)
 btn_upload = customtkinter.CTkButton(
     button_frm, corner_radius=30, hover_color="Green", text="UPLOAD FILES", command=upload_files
 )
-btn_upload.grid(row=0, column=0, padx=(170, 0), sticky="nwne")
+btn_upload.grid(row=0, column=0, padx=(250, 10), pady=10)
 
 btn_check = customtkinter.CTkButton(
     button_frm, corner_radius=30, hover_color="Green", text="CHECK PLAGIARISM", command=check_uploaded_files_plagiarism
 )
-btn_check.grid(row=0, column=1, padx=(30, 0), sticky="nwne")
+btn_check.grid(row=0, column=1, padx=10, pady=10)
 
 btn_report = customtkinter.CTkButton(
     button_frm, corner_radius=30, hover_color="Green", text="EXPORT REPORT", command=export_report
 )
-btn_report.grid(row=0, column=2, padx=(30, 0), sticky="nwne")
+btn_report.grid(row=0, column=2, padx=10, pady=10)
 
 btn_open_report = customtkinter.CTkButton(
     button_frm, corner_radius=30, hover_color="Green", text="OPEN REPORT", command=open_report
 )
-btn_open_report.grid(row=0, column=3, padx=(30, 0), sticky="nwne")
+btn_open_report.grid(row=0, column=3, padx=10, pady=10)
 
 btn_reset = customtkinter.CTkButton(
     button_frm, corner_radius=30, hover_color="Red", text="RESET", command=reset_application
 )
-btn_reset.grid(row=0, column=4, padx=(30, 170), sticky="nwne")
+btn_reset.grid(row=0, column=4, padx=10, pady=10)
 
-welcome_frm.grid(row=0, column=0, padx=(50, 40), pady=(155, 30), sticky="se")
-button_frm.grid(row=0, column=0, padx=(50, 40), pady=(0, 0), sticky="se")
+# Center the frames within the window
+welcome_frm.grid(row=0, column=0, padx=20, pady=(50, 10), sticky="nsew")
+button_frm.grid(row=1, column=0, padx=20, pady=(10, 50), sticky="nsew")
+
+# Configure the grid to center the frames
+window.grid_rowconfigure(0, weight=0)
+window.grid_rowconfigure(0, weight=0)
+window.grid_columnconfigure(0, weight=1)
 
 window.mainloop()
