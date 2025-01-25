@@ -242,9 +242,22 @@ def show_copied_texts():
         no_results_label.pack(pady=10)
         return
 
+    # Use a set to track processed document pairs
+    processed_pairs = set()
+
     for result in flagged_documents:
         file1 = os.path.join("Pending", result["Assignment 1"])
         file2 = os.path.join("Pending", result["Assignment 2"])
+
+        # Create a unique key for the document pair to avoid duplicates
+        pair_key = tuple(sorted((result["Assignment 1"], result["Assignment 2"])))
+
+        # Skip if this pair has already been processed
+        if pair_key in processed_pairs:
+            continue
+
+        # Mark this pair as processed
+        processed_pairs.add(pair_key)
 
         # Extract copied texts
         copied_texts = extract_copied_texts(file1, file2)
