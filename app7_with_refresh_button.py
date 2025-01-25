@@ -9,12 +9,16 @@ from tkinter.filedialog import askopenfilenames
 from docx import Document
 from PyPDF2 import PdfReader
 from fpdf import FPDF
+from difflib import SequenceMatcher
+from PIL import Image, ImageDraw, ImageFont, ImageTk
 
 # Create necessary folders
 if not os.path.exists("Pending"):
     os.makedirs("Pending")
 if not os.path.exists("Reports"):
     os.makedirs("Reports")
+if not os.path.exists("Screenshots"):
+    os.makedirs("Screenshots")
 
 # File conversion functions
 
@@ -78,7 +82,29 @@ def upload_files():
 
     messagebox.showinfo("Upload Complete", "Files uploaded and converted successfully.")
 
-# Function to perform plagiarism only on uploaded files
+# Function to extract copied texts and their source documents
+def extract_copied_texts(file1, file2, threshold=0.7):
+    """Extract copied texts between two files and identify their source documents."""
+    with open(file1, encoding='utf-8') as f1, open(file2, encoding='utf-8') as f2:
+        text1 = f1.read()
+        text2 = f2.read()
+
+    matcher = SequenceMatcher(None, text1, text2)
+    copied_texts = []
+
+    for match in matcher.get_matching_blocks():
+        if match.size >= threshold * len(text1):  # Only consider significant matches
+            copied_text = text1[match.a:match.a + match.size].strip()
+            if copied_text:  # Ignore empty matches
+                copied_texts.append({
+                    "source_document_1": os.path.basename(file1),
+                    "source_document_2": os.path.basename(file2),
+                    "copied_text": copied_text
+                })
+
+    return copied_texts
+
+# Function to perform plagiarism check
 def check_uploaded_files_plagiarism():
     """Perform plagiarism check on the uploaded .txt files in the Pending folder."""
     if not uploaded_files:
@@ -164,6 +190,110 @@ def check_uploaded_files_plagiarism():
     except Exception as e:
         messagebox.showerror("Error", f"An error occurred during the plagiarism check: {e}")
 
+# Function to display copied texts and their source documents
+def show_copied_texts():
+    """Display the copied texts and their source documents in a new window with an improved layout."""
+    if not plagiarism_results:
+        messagebox.showerror("No Results", "No plagiarism results to display.")
+        return
+
+    # Create a new window for displaying copied texts
+    copied_texts_window = customtkinter.CTkToplevel()
+    copied_texts_window.title("Copied Texts and Source Documents")
+    copied_texts_window.geometry("1200x800")
+    copied_texts_window.state("zoomed")  # Make the window full-screen
+
+    # Create a main frame to hold the content
+    main_frame = customtkinter.CTkFrame(copied_texts_window)
+    main_frame.pack(fill="both", expand=True, padx=0, pady=0)  # Remove padding to fill the entire window
+
+    # Create a canvas and a scrollbar for the main frame
+    canvas = tk.Canvas(main_frame)
+    scrollbar = customtkinter.CTkScrollbar(main_frame, orientation="vertical", command=canvas.yview)
+    scrollable_frame = customtkinter.CTkFrame(canvas)
+
+    # Configure the canvas to work with the scrollbar
+    scrollable_frame.bind(
+        "<Configure>",
+        lambda e: canvas.configure(
+            scrollregion=canvas.bbox("all")
+        )
+    )
+
+    # Add the scrollable_frame to the canvas and set its width to match the canvas
+    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw", width=copied_texts_window.winfo_width())
+
+    # Configure the canvas to use the scrollbar
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+    # Bind mouse scroll event to the canvas
+    def _on_mousewheel(event):
+        canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
+    canvas.bind_all("<MouseWheel>", _on_mousewheel)
+
+    # Pack the canvas and scrollbar tightly together
+    canvas.pack(side="left", fill="both", expand=True, padx=0, pady=0)  # Remove padding for canvas
+    scrollbar.pack(side="right", fill="y", padx=0, pady=0)  # Remove padding for scrollbar
+
+    # Extract and display copied texts for flagged documents
+    flagged_documents = [result for result in plagiarism_results if result["Plagiarism Status"] == "Flagged"]
+    if not flagged_documents:
+        no_results_label = customtkinter.CTkLabel(scrollable_frame, text="No flagged documents found.", font=("Arial", 14))
+        no_results_label.pack(pady=10)
+        return
+
+    for result in flagged_documents:
+        file1 = os.path.join("Pending", result["Assignment 1"])
+        file2 = os.path.join("Pending", result["Assignment 2"])
+
+        # Extract copied texts
+        copied_texts = extract_copied_texts(file1, file2)
+
+        if copied_texts:
+            # Create a frame for each flagged document pair
+            document_frame = customtkinter.CTkFrame(scrollable_frame)
+            document_frame.pack(fill="x", padx=10, pady=10)  # Keep padding for document frames
+
+            # Add a heading for the source documents
+            source_label = customtkinter.CTkLabel(
+                document_frame,
+                text=f"Source Documents: {result['Assignment 1']} and {result['Assignment 2']}",
+                font=("Arial", 14, "bold"),
+                text_color="#4CAF50"  # Green color for source documents
+            )
+            source_label.pack(anchor="w", padx=10, pady=(10, 5))  # Keep padding for labels
+
+            # Add a separator
+            separator = tk.Frame(document_frame, height=2, bg="gray")
+            separator.pack(fill="x", padx=10, pady=5)  # Keep padding for separators
+
+            # Display each copied text
+            for copied_text in copied_texts:
+                # Create a frame for each copied text
+                text_frame = customtkinter.CTkFrame(document_frame)
+                text_frame.pack(fill="x", padx=20, pady=5)  # Keep padding for text frames
+
+                # Add the copied text
+                copied_text_label = customtkinter.CTkLabel(
+                    text_frame,
+                    text=f"Copied Text:\n{copied_text['copied_text']}",
+                    font=("Arial", 12),
+                    wraplength=1000,
+                    justify="left",
+                    text_color="#333333",  # Dark gray for better readability
+                    fg_color="#F0F0F0",  # Light gray background for the text frame
+                    corner_radius=5
+                )
+                copied_text_label.pack(anchor="w", padx=10, pady=5, fill="x")  # Keep padding for copied text
+
+            # Add a separator between document pairs
+            separator = tk.Frame(scrollable_frame, height=2, bg="gray")
+            separator.pack(fill="x", padx=10, pady=10)  # Keep padding for separators
+
+    # Update the canvas scroll region
+    canvas.configure(scrollregion=canvas.bbox("all"))
+
 # Function to export the plagiarism report
 def export_report():
     """Generate and export plagiarism report to CSV and PDF."""
@@ -217,6 +347,12 @@ def reset_application():
         if os.path.isfile(file_path):
             os.remove(file_path)
 
+    # Clear Screenshots folder
+    for file in os.listdir("Screenshots"):
+        file_path = os.path.join("Screenshots", file)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+
     messagebox.showinfo("Reset Complete", "Application has been reset to its initial state.")
 
 # GUI IMPLEMENTED USING CUSTOMTKINTER
@@ -263,6 +399,12 @@ btn_reset = customtkinter.CTkButton(
     button_frm, corner_radius=30, hover_color="Red", text="RESET", command=reset_application
 )
 btn_reset.grid(row=0, column=4, padx=10, pady=10)
+
+# Add the "SHOW COPIED TEXTS" button
+btn_show_copied_texts = customtkinter.CTkButton(
+    button_frm, corner_radius=30, hover_color="Green", text="SHOW COPIED TEXTS", command=show_copied_texts
+)
+btn_show_copied_texts.grid(row=0, column=5, padx=10, pady=10)
 
 # Center the frames within the window
 welcome_frm.grid(row=0, column=0, padx=20, pady=(50, 10), sticky="nsew")
