@@ -308,18 +308,36 @@ def show_copied_texts():
 
 # Function to export the plagiarism report (unchanged)
 def export_report():
-    """Generate and export plagiarism report to CSV and PDF."""
+    """Generate and export plagiarism report to CSV and PDF, including only source documents, similarity score, and plagiarism status."""
     if not plagiarism_results:
         messagebox.showerror("No Results", "No plagiarism results to export.")
         return
 
+    # Filter results to include only flagged documents
+    flagged_results = [result for result in plagiarism_results if result["Plagiarism Status"] == "Flagged"]
+
+    if not flagged_results:
+        messagebox.showinfo("No Flagged Documents", "No flagged documents to export.")
+        return
+
+    # Create a simplified report with only the necessary fields
+    simplified_results = [
+        {
+            "Source Document 1": result["Assignment 1"],
+            "Source Document 2": result["Assignment 2"],
+            "Similarity Score": result["Similarity Score"],
+            "Plagiarism Status": result["Plagiarism Status"]
+        }
+        for result in flagged_results
+    ]
+
     # Export to CSV
     csv_filename = os.path.join("Reports", "plagiarism_report.csv")
-    keys = plagiarism_results[0].keys()  # Assuming all reports have the same keys
+    keys = simplified_results[0].keys()  # Assuming all reports have the same keys
     with open(csv_filename, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, fieldnames=keys)
         writer.writeheader()
-        writer.writerows(plagiarism_results)
+        writer.writerows(simplified_results)
 
     # Export to PDF
     pdf_filename = os.path.join("Reports", "plagiarism_report.pdf")
@@ -330,9 +348,12 @@ def export_report():
     pdf.cell(200, 10, txt="Plagiarism Report", ln=True, align='C')
     pdf.ln(10)
 
-    for result in plagiarism_results:
-        pdf.multi_cell(0, 10, txt=f"{result}")
-        pdf.ln(2)
+    for result in simplified_results:
+        pdf.multi_cell(0, 10, txt=f"Source Document 1: {result['Source Document 1']}\n"
+                                  f"Source Document 2: {result['Source Document 2']}\n"
+                                  f"Similarity Score: {result['Similarity Score']}\n"
+                                  f"Plagiarism Status: {result['Plagiarism Status']}\n")
+        pdf.ln(5)  # Add some space between entries
 
     pdf.output(pdf_filename)
     messagebox.showinfo("Report Generated", f"Report saved successfully in Reports folder.\nCSV: {csv_filename}\nPDF: {pdf_filename}")
