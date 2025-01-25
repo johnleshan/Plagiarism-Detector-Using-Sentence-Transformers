@@ -400,12 +400,6 @@ def update_widget_colors():
         btn_toggle_mode.configure(fg_color="#2E2E2E", hover_color="#2E2E2E", text_color="#FFFFFF")
 
 # GUI IMPLEMENTED USING CUSTOMTKINTER
-# ... (Previous code remains unchanged until the GUI IMPLEMENTATION section)
-
-# GUI IMPLEMENTED USING CUSTOMTKINTER
-# ... (Previous code remains unchanged until the GUI IMPLEMENTATION section)
-
-# GUI IMPLEMENTED USING CUSTOMTKINTER
 window = customtkinter.CTk()
 customtkinter.set_appearance_mode("dark")  # Always open the app in dark mode
 window.title("Plagiarism Checker System")
@@ -414,8 +408,8 @@ window.title("Plagiarism Checker System")
 window.state("zoomed")
 
 # Load icons for the toggle button
-sun_icon = ImageTk.PhotoImage(Image.open("sun.png").resize((20, 20)))  # Replace "sun.png" with the path to your sun icon
-moon_icon = ImageTk.PhotoImage(Image.open("moon.png").resize((20, 20)))  # Replace "moon.png" with the path to your moon icon
+sun_icon = ImageTk.PhotoImage(Image.open("sun.png").resize((32, 32)))  # Replace "sun.png" with the path to your sun icon
+moon_icon = ImageTk.PhotoImage(Image.open("moon.png").resize((32, 32)))  # Replace "moon.png" with the path to your moon icon
 
 # FRONT END DESIGN
 # 1st Frame containing the welcome and intro msg label widgets.
@@ -425,14 +419,14 @@ welcome_msg_variable = tk.StringVar(welcome_frm, welcome_msg)
 welcome_lbl = customtkinter.CTkLabel(welcome_frm, textvariable=welcome_msg_variable,
                                      height=100, corner_radius=20, 
                                      text_color="yellow", font=("Comic Sans MS bold", 30))
-welcome_lbl.grid(row=0, column=0, padx=180, pady=(20, 0), sticky="nsew")
+welcome_lbl.grid(row=0, column=0, padx=200, pady=(20, 0), sticky="nsew")
 
 # 3rd Frame contains the buttons to help with the functionality of the whole app.
 button_frm = customtkinter.CTkFrame(window)
 btn_upload = customtkinter.CTkButton(
     button_frm, corner_radius=30, hover_color="Green", text="UPLOAD FILES", command=upload_files
 )
-btn_upload.grid(row=0, column=0, padx=(250, 10), pady=10)
+btn_upload.grid(row=0, column=0, padx=(180, 10), pady=10)
 
 btn_check = customtkinter.CTkButton(
     button_frm, corner_radius=30, hover_color="Green", text="CHECK PLAGIARISM", command=check_uploaded_files_plagiarism
@@ -466,10 +460,10 @@ top_right_frame.grid(row=0, column=1, padx=20, pady=20, sticky="ne")  # Position
 
 # Add the "TOGGLE MODE" button to the top-right frame
 btn_toggle_mode = customtkinter.CTkButton(
-    top_right_frame, corner_radius=30, text="", image=sun_icon, command=toggle_appearance_mode,
-    fg_color="#2E2E2E", hover_color="#2E2E2E"  # Match the background color of the app
+    top_right_frame, text="", image=sun_icon, command=toggle_appearance_mode,
+    fg_color="#2E2E2E", hover_color="#2E2E2E", width=40, height=40  # Increase button size to 40x40
 )
-btn_toggle_mode.grid(row=0, column=0, padx=10, pady=10)
+btn_toggle_mode.grid(row=0, column=0)
 
 # Center the frames within the window
 welcome_frm.grid(row=0, column=0, padx=20, pady=(50, 10), sticky="nsew")
