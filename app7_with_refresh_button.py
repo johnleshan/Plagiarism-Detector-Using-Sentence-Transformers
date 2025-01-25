@@ -260,7 +260,7 @@ def show_copied_texts():
                 document_frame,
                 text=f"Source Documents: {result['Assignment 1']} and {result['Assignment 2']}",
                 font=("Arial", 14, "bold"),
-                text_color="#4CAF50"  # Green color for source documents
+                text_color="#4CAF50" if customtkinter.get_appearance_mode() == "Dark" else "#2E2E2E"  # Green in dark mode, dark gray in light mode
             )
             source_label.pack(anchor="w", padx=10, pady=(10, 5))  # Keep padding for labels
 
@@ -355,6 +355,46 @@ def reset_application():
 
     messagebox.showinfo("Reset Complete", "Application has been reset to its initial state.")
 
+# Function to toggle between dark and light modes
+def toggle_appearance_mode():
+    """Toggle between dark and light modes and update widget colors."""
+    current_mode = customtkinter.get_appearance_mode()
+    if current_mode == "Dark":
+        customtkinter.set_appearance_mode("Light")
+        update_widget_colors()
+    else:
+        customtkinter.set_appearance_mode("Dark")
+        update_widget_colors()
+
+# Function to update widget colors based on the selected mode
+def update_widget_colors():
+    """Update the colors of all widgets based on the selected mode."""
+    current_mode = customtkinter.get_appearance_mode()
+    if current_mode == "Light":
+        # Light mode colors
+        window.configure(fg_color="#F5F5F5")  # Light gray background
+        welcome_frm.configure(fg_color="#F5F5F5")  # Light gray background
+        welcome_lbl.configure(text_color="#333333")  # Dark gray text
+        button_frm.configure(fg_color="#F5F5F5")  # Light gray background
+
+        # Buttons remain the same as in dark mode
+        for button in [btn_upload, btn_check, btn_report, btn_open_report, btn_reset, btn_show_copied_texts, btn_toggle_mode]:
+            button.configure(fg_color="#4CAF50", hover_color="#45a049", text_color="#FFFFFF")  # Green buttons with white text
+        btn_reset.configure(fg_color="#FF0000", hover_color="#CC0000")  # Red reset button
+        btn_toggle_mode.configure(fg_color="#0000FF", hover_color="#0000CC")  # Blue toggle button
+    else:
+        # Dark mode colors (default)
+        window.configure(fg_color="#2E2E2E")  # Dark gray background
+        welcome_frm.configure(fg_color="#2E2E2E")  # Dark gray background
+        welcome_lbl.configure(text_color="yellow")  # Yellow text
+        button_frm.configure(fg_color="#2E2E2E")  # Dark gray background
+
+        # Buttons remain the same as in dark mode
+        for button in [btn_upload, btn_check, btn_report, btn_open_report, btn_reset, btn_show_copied_texts, btn_toggle_mode]:
+            button.configure(fg_color="#4CAF50", hover_color="#45a049", text_color="#FFFFFF")  # Green buttons with white text
+        btn_reset.configure(fg_color="#FF0000", hover_color="#CC0000")  # Red reset button
+        btn_toggle_mode.configure(fg_color="#0000FF", hover_color="#0000CC")  # Blue toggle button
+
 # GUI IMPLEMENTED USING CUSTOMTKINTER
 window = customtkinter.CTk()
 customtkinter.set_appearance_mode("dark")  # Always open the app in dark mode
@@ -406,6 +446,12 @@ btn_show_copied_texts = customtkinter.CTkButton(
 )
 btn_show_copied_texts.grid(row=0, column=5, padx=10, pady=10)
 
+# Add the "TOGGLE MODE" button
+btn_toggle_mode = customtkinter.CTkButton(
+    button_frm, corner_radius=30, hover_color="Blue", text="TOGGLE MODE", command=toggle_appearance_mode
+)
+btn_toggle_mode.grid(row=0, column=6, padx=10, pady=10)
+
 # Center the frames within the window
 welcome_frm.grid(row=0, column=0, padx=20, pady=(50, 10), sticky="nsew")
 button_frm.grid(row=1, column=0, padx=20, pady=(10, 50), sticky="nsew")
@@ -414,5 +460,8 @@ button_frm.grid(row=1, column=0, padx=20, pady=(10, 50), sticky="nsew")
 window.grid_rowconfigure(0, weight=0)
 window.grid_rowconfigure(0, weight=0)
 window.grid_columnconfigure(0, weight=1)
+
+# Initialize widget colors based on the default mode (dark)
+update_widget_colors()
 
 window.mainloop()
