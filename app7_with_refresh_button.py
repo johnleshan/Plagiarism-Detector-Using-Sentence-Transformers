@@ -20,8 +20,7 @@ if not os.path.exists("Reports"):
 if not os.path.exists("Screenshots"):
     os.makedirs("Screenshots")
 
-# File conversion functions
-
+# File conversion functions (unchanged)
 def convert_docx_to_txt(docx_file, txt_file):
     """Convert .docx to .txt using python-docx."""
     document = Document(docx_file)
@@ -60,7 +59,7 @@ def convert_to_txt(input_file):
 uploaded_files = []
 plagiarism_results = []
 
-# Function to upload multiple files
+# Function to upload multiple files (unchanged)
 def upload_files():
     """Upload multiple files and convert them to .txt in the Pending folder."""
     filepaths = askopenfilenames(
@@ -82,7 +81,7 @@ def upload_files():
 
     messagebox.showinfo("Upload Complete", "Files uploaded and converted successfully.")
 
-# Function to extract copied texts and their source documents
+# Function to extract copied texts and their source documents (unchanged)
 def extract_copied_texts(file1, file2, threshold=0.7):
     """Extract copied texts between two files and identify their source documents."""
     with open(file1, encoding='utf-8') as f1, open(file2, encoding='utf-8') as f2:
@@ -104,7 +103,7 @@ def extract_copied_texts(file1, file2, threshold=0.7):
 
     return copied_texts
 
-# Function to perform plagiarism check
+# Function to perform plagiarism check (unchanged)
 def check_uploaded_files_plagiarism():
     """Perform plagiarism check on the uploaded .txt files in the Pending folder."""
     if not uploaded_files:
@@ -190,7 +189,7 @@ def check_uploaded_files_plagiarism():
     except Exception as e:
         messagebox.showerror("Error", f"An error occurred during the plagiarism check: {e}")
 
-# Function to display copied texts and their source documents
+# Function to display copied texts and their source documents (unchanged)
 def show_copied_texts():
     """Display the copied texts and their source documents in a new window with an improved layout."""
     if not plagiarism_results:
@@ -294,7 +293,7 @@ def show_copied_texts():
     # Update the canvas scroll region
     canvas.configure(scrollregion=canvas.bbox("all"))
 
-# Function to export the plagiarism report
+# Function to export the plagiarism report (unchanged)
 def export_report():
     """Generate and export plagiarism report to CSV and PDF."""
     if not plagiarism_results:
@@ -325,7 +324,7 @@ def export_report():
     pdf.output(pdf_filename)
     messagebox.showinfo("Report Generated", f"Report saved successfully in Reports folder.\nCSV: {csv_filename}\nPDF: {pdf_filename}")
 
-# Function to open the generated report
+# Function to open the generated report (unchanged)
 def open_report():
     """Allow the user to open the report in either CSV or PDF format."""
     report_choice = messagebox.askquestion("Open Report", "Would you like to open the report in PDF format? Click 'Yes' for PDF and 'No' for CSV.")
@@ -334,7 +333,7 @@ def open_report():
     else:
         os.system(f'start Reports/plagiarism_report.csv')
 
-# Function to reset the application
+# Function to reset the application (unchanged)
 def reset_application():
     """Clear all data and reset the application to its initial state."""
     global uploaded_files, plagiarism_results
@@ -361,10 +360,11 @@ def toggle_appearance_mode():
     current_mode = customtkinter.get_appearance_mode()
     if current_mode == "Dark":
         customtkinter.set_appearance_mode("Light")
-        update_widget_colors()
+        btn_toggle_mode.configure(image=moon_icon)  # Show moon icon for light mode
     else:
         customtkinter.set_appearance_mode("Dark")
-        update_widget_colors()
+        btn_toggle_mode.configure(image=sun_icon)  # Show sun icon for dark mode
+    update_widget_colors()
 
 # Function to update widget colors based on the selected mode
 def update_widget_colors():
@@ -378,10 +378,12 @@ def update_widget_colors():
         button_frm.configure(fg_color="#F5F5F5")  # Light gray background
 
         # Buttons remain the same as in dark mode
-        for button in [btn_upload, btn_check, btn_report, btn_open_report, btn_reset, btn_show_copied_texts, btn_toggle_mode]:
+        for button in [btn_upload, btn_check, btn_report, btn_open_report, btn_reset, btn_show_copied_texts]:
             button.configure(fg_color="#4CAF50", hover_color="#45a049", text_color="#FFFFFF")  # Green buttons with white text
         btn_reset.configure(fg_color="#FF0000", hover_color="#CC0000")  # Red reset button
-        btn_toggle_mode.configure(fg_color="#0000FF", hover_color="#0000CC")  # Blue toggle button
+
+        # Update toggle button background to match the app's background
+        btn_toggle_mode.configure(fg_color="#F5F5F5", hover_color="#F5F5F5", text_color="#000000")
     else:
         # Dark mode colors (default)
         window.configure(fg_color="#2E2E2E")  # Dark gray background
@@ -390,10 +392,18 @@ def update_widget_colors():
         button_frm.configure(fg_color="#2E2E2E")  # Dark gray background
 
         # Buttons remain the same as in dark mode
-        for button in [btn_upload, btn_check, btn_report, btn_open_report, btn_reset, btn_show_copied_texts, btn_toggle_mode]:
+        for button in [btn_upload, btn_check, btn_report, btn_open_report, btn_reset, btn_show_copied_texts]:
             button.configure(fg_color="#4CAF50", hover_color="#45a049", text_color="#FFFFFF")  # Green buttons with white text
         btn_reset.configure(fg_color="#FF0000", hover_color="#CC0000")  # Red reset button
-        btn_toggle_mode.configure(fg_color="#0000FF", hover_color="#0000CC")  # Blue toggle button
+
+        # Update toggle button background to match the app's background
+        btn_toggle_mode.configure(fg_color="#2E2E2E", hover_color="#2E2E2E", text_color="#FFFFFF")
+
+# GUI IMPLEMENTED USING CUSTOMTKINTER
+# ... (Previous code remains unchanged until the GUI IMPLEMENTATION section)
+
+# GUI IMPLEMENTED USING CUSTOMTKINTER
+# ... (Previous code remains unchanged until the GUI IMPLEMENTATION section)
 
 # GUI IMPLEMENTED USING CUSTOMTKINTER
 window = customtkinter.CTk()
@@ -402,6 +412,10 @@ window.title("Plagiarism Checker System")
 
 # Set the window to maximized state (covers the screen but leaves the taskbar visible)
 window.state("zoomed")
+
+# Load icons for the toggle button
+sun_icon = ImageTk.PhotoImage(Image.open("sun.png").resize((20, 20)))  # Replace "sun.png" with the path to your sun icon
+moon_icon = ImageTk.PhotoImage(Image.open("moon.png").resize((20, 20)))  # Replace "moon.png" with the path to your moon icon
 
 # FRONT END DESIGN
 # 1st Frame containing the welcome and intro msg label widgets.
@@ -446,11 +460,16 @@ btn_show_copied_texts = customtkinter.CTkButton(
 )
 btn_show_copied_texts.grid(row=0, column=5, padx=10, pady=10)
 
-# Add the "TOGGLE MODE" button
+# Create a new frame for the top-right corner
+top_right_frame = customtkinter.CTkFrame(window)
+top_right_frame.grid(row=0, column=1, padx=20, pady=20, sticky="ne")  # Position in the top-right corner
+
+# Add the "TOGGLE MODE" button to the top-right frame
 btn_toggle_mode = customtkinter.CTkButton(
-    button_frm, corner_radius=30, hover_color="Blue", text="TOGGLE MODE", command=toggle_appearance_mode
+    top_right_frame, corner_radius=30, text="", image=sun_icon, command=toggle_appearance_mode,
+    fg_color="#2E2E2E", hover_color="#2E2E2E"  # Match the background color of the app
 )
-btn_toggle_mode.grid(row=0, column=6, padx=10, pady=10)
+btn_toggle_mode.grid(row=0, column=0, padx=10, pady=10)
 
 # Center the frames within the window
 welcome_frm.grid(row=0, column=0, padx=20, pady=(50, 10), sticky="nsew")
