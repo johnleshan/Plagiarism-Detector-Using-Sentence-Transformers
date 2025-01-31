@@ -1,7 +1,10 @@
 # Importing the necessary modules
 import os
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.cluster import KMeans
 from sklearn.metrics.pairwise import cosine_similarity
+from sentence_transformers import SentenceTransformer  # For semantic embeddings
+from joblib import Parallel, delayed  # For parallel processing
+import numpy as np
 
 # List all text files in the current directory
 student_files = [doc for doc in os.listdir() if doc.endswith('.txt')]
@@ -9,44 +12,57 @@ student_files = [doc for doc in os.listdir() if doc.endswith('.txt')]
 # Read the content of each text file
 student_notes = [open(_file, encoding='utf-8').read() for _file in student_files]
 
-# Function to convert text to TF-IDF vectors
-def vectorize(Text):
-    return TfidfVectorizer().fit_transform(Text).toarray()
+# Load pre-trained Sentence-BERT model for semantic embeddings
+model = SentenceTransformer('all-MiniLM-L6-v2')  # Lightweight and efficient model
 
-# Function to compute cosine similarity between two documents
-def similarity(doc1, doc2):
-    return cosine_similarity([doc1, doc2])
-
-# Convert the student notes to TF-IDF vectors
-vectors = vectorize(student_notes)
-
-# Pair each student file with its corresponding vector
-s_vectors = list(zip(student_files, vectors))
+# Generate semantic embeddings for all documents
+embeddings = model.encode(student_notes)
 
 # Set to store plagiarism results
 plagiarism_results = set()
 
+# Threshold for considering plagiarism (e.g., 0.7 means 70% similarity)
+PLAGIARISM_THRESHOLD = 0.7
+
+# Number of clusters for K-Means (adjust based on dataset size)
+NUM_CLUSTERS = 5
+
+# Perform K-Means clustering on the embeddings
+kmeans = KMeans(n_clusters=NUM_CLUSTERS, random_state=42)
+clusters = kmeans.fit_predict(embeddings)
+
+# Function to compute cosine similarity between two documents
+def similarity(doc1, doc2):
+    return cosine_similarity([doc1], [doc2])[0][0]
+
+# Function to compare documents within the same cluster
+def compare_documents_in_cluster(cluster_id, student_files, embeddings, clusters):
+    results = []
+    # Get indices of documents in the current cluster
+    cluster_indices = np.where(clusters == cluster_id)[0]
+    # Compare each document in the cluster with every other document in the same cluster
+    for i in cluster_indices:
+        for j in cluster_indices:
+            if i != j:  # Avoid self-comparison
+                sim_score = similarity(embeddings[i], embeddings[j])
+                if sim_score > PLAGIARISM_THRESHOLD:  # Only consider scores above the threshold
+                    student_pair = sorted((student_files[i], student_files[j]))
+                    results.append((student_pair[0], student_pair[1], sim_score))
+    return results
+
 # Function to check for plagiarism among student files
 def check_plagiarism():
-    global s_vectors
-    for student_a, text_vector_a in s_vectors:
-        # Create a copy of the vectors list and remove the current student's vector
-        new_vectors = s_vectors.copy()
-        current_index = new_vectors.index((student_a, text_vector_a))
-        del new_vectors[current_index]
-        
-        # Compare the current student's vector with all other students' vectors
-        for student_b, text_vector_b in new_vectors:
-            # Compute the similarity score
-            sim_score = similarity(text_vector_a, text_vector_b)[0][1]
-            # Sort the student pair to avoid duplicate entries
-            student_pair = sorted((student_a, student_b))
-            # Store the result as a tuple
-            score = (student_pair[0], student_pair[1], sim_score)
-            # Add the result to the set
-            plagiarism_results.add(score)
+    global embeddings, student_files, clusters
+    # Use parallel processing to compare documents within each cluster
+    results = Parallel(n_jobs=-1)(delayed(compare_documents_in_cluster)(cluster_id, student_files, embeddings, clusters)
+                                  for cluster_id in range(NUM_CLUSTERS))
+    # Flatten the results and add them to the set
+    for sublist in results:
+        for item in sublist:
+            plagiarism_results.add(item)
     return plagiarism_results
 
 # Print the plagiarism results
+print("Plagiarism Results (Student A, Student B, Similarity Score):")
 for data in check_plagiarism():
     print(data)
