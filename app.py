@@ -191,7 +191,7 @@ def check_uploaded_files_plagiarism():
 
 # Function to display copied texts and their source documents (unchanged)
 def show_copied_texts():
-    """Display the copied texts and their source documents in a new window with an improved layout."""
+    """Display the copied texts and their source documents in a new window with pagination."""
     if not plagiarism_results:
         messagebox.showerror("No Results", "No plagiarism results to display.")
         return
@@ -200,11 +200,11 @@ def show_copied_texts():
     copied_texts_window = customtkinter.CTkToplevel()
     copied_texts_window.title("Copied Texts and Source Documents")
     copied_texts_window.geometry("1200x800")
-    copied_texts_window.state("zoomed")  # Make the window full-screen
+    copied_texts_window.state("zoomed")
 
     # Create a main frame to hold the content
     main_frame = customtkinter.CTkFrame(copied_texts_window)
-    main_frame.pack(fill="both", expand=True, padx=0, pady=0)  # Remove padding to fill the entire window
+    main_frame.pack(fill="both", expand=True, padx=0, pady=0)
 
     # Create a canvas and a scrollbar for the main frame
     canvas = tk.Canvas(main_frame)
@@ -212,99 +212,152 @@ def show_copied_texts():
     scrollable_frame = customtkinter.CTkFrame(canvas)
 
     # Configure the canvas to work with the scrollbar
-    scrollable_frame.bind(
-        "<Configure>",
-        lambda e: canvas.configure(
-            scrollregion=canvas.bbox("all")
-        )
-    )
+    scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
 
-    # Add the scrollable_frame to the canvas and set its width to match the canvas
+    # Add the scrollable_frame to the canvas
     canvas.create_window((0, 0), window=scrollable_frame, anchor="nw", width=copied_texts_window.winfo_width())
-
-    # Configure the canvas to use the scrollbar
     canvas.configure(yscrollcommand=scrollbar.set)
 
     # Bind mouse scroll event to the canvas
     def _on_mousewheel(event):
         canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
-
     canvas.bind_all("<MouseWheel>", _on_mousewheel)
 
-    # Pack the canvas and scrollbar tightly together
-    canvas.pack(side="left", fill="both", expand=True, padx=0, pady=0)  # Remove padding for canvas
-    scrollbar.pack(side="right", fill="y", padx=0, pady=0)  # Remove padding for scrollbar
+    # Pack the canvas and scrollbar
+    canvas.pack(side="left", fill="both", expand=True)
+    scrollbar.pack(side="right", fill="y")
 
-    # Extract and display copied texts for flagged documents
-    flagged_documents = [result for result in plagiarism_results if result["Plagiarism Status"] == "Flagged"]
+    # Step 1: Deduplicate flagged_documents globally
+    flagged_documents = []
+    processed_pairs_global = set()  # Track pairs across all pages
+
+    for result in plagiarism_results:
+        if result["Plagiarism Status"] == "Flagged":
+            # Create a sorted unique key for the document pair
+            pair_key = tuple(sorted((result["Assignment 1"], result["Assignment 2"])))
+            if pair_key not in processed_pairs_global:
+                flagged_documents.append(result)
+                processed_pairs_global.add(pair_key)
+
     if not flagged_documents:
         no_results_label = customtkinter.CTkLabel(scrollable_frame, text="No flagged documents found.", font=("Arial", 14))
         no_results_label.pack(pady=10)
         return
 
-    # Use a set to track processed document pairs
-    processed_pairs = set()
+    # Pagination variables
+    pairs_per_page = 10  # Adjust as needed
+    current_page = 0
+    total_pages = (len(flagged_documents) + pairs_per_page - 1) // pairs_per_page  # Ceiling division
 
-    for result in flagged_documents:
-        file1 = os.path.join("Pending", result["Assignment 1"])
-        file2 = os.path.join("Pending", result["Assignment 2"])
+    # Updated display_page function within the show_copied_texts function
+    def display_page(page):
+        """Display a specific page of flagged document pairs."""
+        # Clear previous content
+        for widget in scrollable_frame.winfo_children():
+            widget.destroy()
 
-        # Create a unique key for the document pair to avoid duplicates
-        pair_key = tuple(sorted((result["Assignment 1"], result["Assignment 2"])))
+        # Calculate the range of pairs to display
+        start_idx = page * pairs_per_page
+        end_idx = min((page + 1) * pairs_per_page, len(flagged_documents))
 
-        # Skip if this pair has already been processed
-        if pair_key in processed_pairs:
-            continue
+        # Display pairs for the current page
+        for i in range(start_idx, end_idx):
+            result = flagged_documents[i]
+            file1 = os.path.join("Pending", result["Assignment 1"])
+            file2 = os.path.join("Pending", result["Assignment 2"])
 
-        # Mark this pair as processed
-        processed_pairs.add(pair_key)
+            # Extract copied texts
+            copied_texts = extract_copied_texts(file1, file2)
 
-        # Extract copied texts
-        copied_texts = extract_copied_texts(file1, file2)
-
-        if copied_texts:
-            # Create a frame for each flagged document pair
+            # Create a frame for each flagged document pair regardless of copied_texts
             document_frame = customtkinter.CTkFrame(scrollable_frame)
-            document_frame.pack(fill="x", padx=10, pady=10)  # Keep padding for document frames
+            document_frame.pack(fill="x", padx=10, pady=10)
 
-            # Add a heading for the source documents
+            # Add heading for source documents
             source_label = customtkinter.CTkLabel(
                 document_frame,
                 text=f"Source Documents: {result['Assignment 1']} and {result['Assignment 2']}",
                 font=("Arial", 14, "bold"),
-                text_color="#4CAF50" if customtkinter.get_appearance_mode() == "Dark" else "#2E2E2E"  # Green in dark mode, dark gray in light mode
+                text_color="#4CAF50" if customtkinter.get_appearance_mode() == "Dark" else "#2E2E2E"
             )
-            source_label.pack(anchor="w", padx=10, pady=(10, 5))  # Keep padding for labels
+            source_label.pack(anchor="w", padx=10, pady=(10, 5))
 
-            # Add a separator
+            # Add separator
             separator = tk.Frame(document_frame, height=2, bg="gray")
-            separator.pack(fill="x", padx=10, pady=5)  # Keep padding for separators
+            separator.pack(fill="x", padx=10, pady=5)
 
-            # Display each copied text
-            for copied_text in copied_texts:
-                # Create a frame for each copied text
-                text_frame = customtkinter.CTkFrame(document_frame)
-                text_frame.pack(fill="x", padx=20, pady=5)  # Keep padding for text frames
-
-                # Add the copied text
-                copied_text_label = customtkinter.CTkLabel(
-                    text_frame,
-                    text=f"Copied Text:\n{copied_text['copied_text']}",
-                    font=("Arial", 12),
-                    wraplength=1000,
-                    justify="left",
-                    text_color="#333333",  # Dark gray for better readability
-                    fg_color="#F0F0F0",  # Light gray background for the text frame
-                    corner_radius=5
+            # Display copied texts if available
+            if copied_texts:
+                for copied_text in copied_texts:
+                    text_frame = customtkinter.CTkFrame(document_frame)
+                    text_frame.pack(fill="x", padx=20, pady=5)
+                    copied_text_label = customtkinter.CTkLabel(
+                        text_frame,
+                        text=f"Copied Text:\n{copied_text['copied_text']}",
+                        font=("Arial", 12),
+                        wraplength=1000,
+                        justify="left",
+                        text_color="#333333",
+                        fg_color="#F0F0F0",
+                        corner_radius=5
+                    )
+                    copied_text_label.pack(anchor="w", padx=10, pady=5, fill="x")
+            else:
+                # Add a message if no copied texts were found
+                no_text_frame = customtkinter.CTkFrame(document_frame)
+                no_text_frame.pack(fill="x", padx=20, pady=5)
+                no_text_label = customtkinter.CTkLabel(
+                    no_text_frame,
+                    text="No specific copied texts detected, but similarity is above threshold.",
+                    font=("Arial", 12, "italic"),
+                    text_color="#666666"
                 )
-                copied_text_label.pack(anchor="w", padx=10, pady=5, fill="x")  # Keep padding for copied text
+                no_text_label.pack(anchor="w", padx=10, pady=5)
 
-            # Add a separator between document pairs
+            # Add separator between document pairs
             separator = tk.Frame(scrollable_frame, height=2, bg="gray")
-            separator.pack(fill="x", padx=10, pady=10)  # Keep padding for separators
+            separator.pack(fill="x", padx=10, pady=10)
 
-    # Update the canvas scroll region
-    canvas.configure(scrollregion=canvas.bbox("all"))
+        # Update the canvas scroll region
+        canvas.configure(scrollregion=canvas.bbox("all"))
+
+    # Pagination controls
+    pagination_frame = customtkinter.CTkFrame(main_frame)
+    pagination_frame.pack(fill="x", padx=10, pady=10)
+
+    def update_buttons():
+        """Update the state of pagination buttons."""
+        prev_button.configure(state="normal" if current_page > 0 else "disabled")
+        next_button.configure(state="normal" if current_page < total_pages - 1 else "disabled")
+        page_label.configure(text=f"Page {current_page + 1} of {total_pages}")
+
+    def next_page():
+        nonlocal current_page
+        if current_page < total_pages - 1:
+            current_page += 1
+            display_page(current_page)
+            update_buttons()
+
+    def prev_page():
+        nonlocal current_page
+        if current_page > 0:
+            current_page -= 1
+            display_page(current_page)
+            update_buttons()
+
+    # Buttons and page label
+    prev_button = customtkinter.CTkButton(pagination_frame, text="Previous", command=prev_page, state="disabled")
+    prev_button.pack(side="left", padx=10)
+
+    page_label = customtkinter.CTkLabel(pagination_frame, text="")
+    page_label.pack(side="left", expand=True)
+
+    next_button = customtkinter.CTkButton(pagination_frame, text="Next", command=next_page, state="normal" if total_pages > 1 else "disabled")
+    next_button.pack(side="right", padx=10)
+
+    # Initial display
+    display_page(current_page)
+    update_buttons()
 
 # Function to export the plagiarism report (unchanged)
 def export_report():
