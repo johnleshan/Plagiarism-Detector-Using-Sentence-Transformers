@@ -6,7 +6,6 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Suppress INFO and WARNING messages
 warnings.filterwarnings('ignore', category=DeprecationWarning)
 warnings.filterwarnings('ignore', module='tensorflow')
 
-# Importing the necessary modules
 import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
@@ -14,6 +13,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer  # For semantic embeddings
 from joblib import Parallel, delayed  # For parallel processing
 from collections import defaultdict  # For efficient grouping of documents
+
 
 # List all text files in the current directory
 student_files = [doc for doc in os.listdir() if doc.endswith('.txt')]
@@ -98,6 +98,18 @@ def check_plagiarism():
     return plagiarism_results
 
 # Print the plagiarism results
-print("Plagiarism Results (Student A, Student B, Similarity Score):")
+print("\nPlagiarism Results:")
+print("{:<10} {:<30} {:<30} {:<20}".format("ID", "Source Document", "Copied Document", "Similarity Score"))
+id_counter = 1
 for data in check_plagiarism():
-    print(data)
+    source_doc, copied_doc, sim_score = data
+    # Fetch the content of both documents
+    with open(source_doc, 'r', encoding='utf-8') as f1, open(copied_doc, 'r', encoding='utf-8') as f2:
+        source_content = f1.read()
+        copied_content = f2.read()
+    
+    # Display the results on the command line
+    print("{:<10} {:<30} {:<30} {:.2f}".format(id_counter, source_doc, copied_doc, sim_score))
+    print(f"Source Text:\n{source_content}\n")
+    print(f"Copied Text:\n{copied_content}\n{'-'*80}")
+    id_counter += 1
