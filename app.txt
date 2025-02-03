@@ -8,10 +8,6 @@ from sentence_transformers import SentenceTransformer  # For semantic embeddings
 from joblib import Parallel, delayed  # For parallel processing
 import matplotlib.pyplot as plt  # For visualizing the Elbow Method
 from collections import defaultdict  # For efficient grouping of documents
-import tensorflow as tf
-
-# Disable oneDNN custom operations
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 # List all text files in the current directory
 student_files = [doc for doc in os.listdir() if doc.endswith('.txt')]
