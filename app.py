@@ -1,5 +1,12 @@
-# Importing the necessary modules
 import os
+import warnings
+
+# Suppress TensorFlow deprecation warnings
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Suppress INFO and WARNING messages
+warnings.filterwarnings('ignore', category=DeprecationWarning)
+warnings.filterwarnings('ignore', module='tensorflow')
+
+# Importing the necessary modules
 import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
@@ -62,7 +69,7 @@ clusters = kmeans.fit_predict(embeddings)
 # Group documents by their cluster for efficient comparison
 cluster_groups = defaultdict(list)
 for idx, cluster_id in enumerate(clusters):
-    cluster_groups[cluster_id].append((idx, student_files[idx], embeddings[idx]))
+    cluster_groups[cluster_id].append((student_files[idx], embeddings[idx]))
 
 # Function to compare documents within the same cluster
 def compare_documents_in_cluster(cluster_docs):
@@ -70,12 +77,12 @@ def compare_documents_in_cluster(cluster_docs):
     # Compare each document in the cluster with every other document in the same cluster
     for i in range(len(cluster_docs)):
         for j in range(i + 1, len(cluster_docs)):
-            id_a, student_a, embedding_a = cluster_docs[i]
-            id_b, student_b, embedding_b = cluster_docs[j]
+            student_a, embedding_a = cluster_docs[i]
+            student_b, embedding_b = cluster_docs[j]
             sim_score = similarity(embedding_a, embedding_b)
             if sim_score > PLAGIARISM_THRESHOLD:  # Only consider scores above the threshold
                 student_pair = sorted((student_a, student_b))
-                results.append((id_a, id_b, student_pair[0], student_pair[1], sim_score))
+                results.append((student_pair[0], student_pair[1], sim_score))
     return results
 
 # Function to check for plagiarism among student files
@@ -91,6 +98,6 @@ def check_plagiarism():
     return plagiarism_results
 
 # Print the plagiarism results
-print("Plagiarism Results (ID_A, ID_B, Source Document, Copied Document, Similarity Score):")
+print("Plagiarism Results (Student A, Student B, Similarity Score):")
 for data in check_plagiarism():
     print(data)
