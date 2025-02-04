@@ -226,6 +226,94 @@ def check_uploaded_files_plagiarism():
         messagebox.showerror("Error", f"An error occurred during the plagiarism check: {e}")
 
 def show_copied_texts():
+    """Display the plagiarism results in the original text-based format within the UI window"""
+    if not plagiarism_results:
+        messagebox.showerror("No Results", "No plagiarism results to display.")
+        return
+
+    # Create a new window
+    results_window = customtkinter.CTkToplevel()
+    results_window.title("Plagiarism Results")
+    results_window.geometry("1200x800")
+    results_window.state("zoomed")
+
+    # Create main container
+    main_frame = customtkinter.CTkFrame(results_window)
+    main_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+    # Create text widget for output
+    text_widget = tk.Text(main_frame, wrap="word", font=("Consolas", 12))
+    scrollbar = customtkinter.CTkScrollbar(main_frame, command=text_widget.yview)
+    text_widget.configure(yscrollcommand=scrollbar.set)
+
+    # Grid layout
+    text_widget.grid(row=0, column=0, sticky="nsew")
+    scrollbar.grid(row=0, column=1, sticky="ns")
+    main_frame.grid_rowconfigure(0, weight=1)
+    main_frame.grid_columnconfigure(0, weight=1)
+
+    # Add content in the original format
+    text_widget.insert("end", "\nPlagiarism Results:\n")
+    text_widget.insert("end", "{:<10} {:<30} {:<30} {:<20}\n".format(
+        "ID", "Source Document", "Copied Document", "Similarity Score"))
+    text_widget.insert("end", "-"*100 + "\n")
+    
+    id_counter = 1
+    for result in plagiarism_results:
+        if result["Plagiarism Status"] == "Flagged":
+            source_doc = result["Assignment 1"]
+            copied_doc = result["Assignment 2"]
+            sim_score = float(result["Similarity Score"])
+            
+            # Add main result line
+            text_widget.insert("end", "{:<10} {:<30} {:<30} {:.2f}\n".format(
+                id_counter, 
+                source_doc, 
+                copied_doc, 
+                sim_score
+            ))
+            
+            # Add document contents
+            try:
+                with open(os.path.join("Pending", source_doc), 'r', encoding='utf-8') as f1, \
+                     open(os.path.join("Pending", copied_doc), 'r', encoding='utf-8') as f2:
+                    source_content = f1.read()
+                    copied_content = f2.read()
+                    
+                    text_widget.insert("end", f"\nSource Text ({source_doc}):\n")
+                    text_widget.insert("end", source_content + "\n\n")
+                    text_widget.insert("end", f"Copied Text ({copied_doc}):\n")
+                    text_widget.insert("end", copied_content + "\n")
+                    text_widget.insert("end", "-"*100 + "\n\n")
+                    
+                id_counter += 1
+            except Exception as e:
+                text_widget.insert("end", f"Error loading documents: {str(e)}\n")
+
+    # Configure tags for formatting
+    text_widget.tag_configure("header", foreground="blue" if customtkinter.get_appearance_mode() == "Light" else "cyan")
+    text_widget.tag_configure("highlight", foreground="red" if customtkinter.get_appearance_mode() == "Light" else "orange")
+    
+    # Apply formatting
+    text_widget.tag_add("header", "1.0", "3.0")
+    text_widget.tag_add("highlight", "1.0", "end")
+    
+    # Make text widget read-only
+    text_widget.configure(state="disabled")
+    
+    # Add close button
+    close_btn = customtkinter.CTkButton(
+        main_frame, 
+        text="Close Window", 
+        command=results_window.destroy,
+        fg_color="#4CAF50",
+        hover_color="#45a049"
+    )
+    close_btn.grid(row=1, column=0, pady=10)
+
+    # Configure grid weights
+    main_frame.grid_rowconfigure(0, weight=1)
+    main_frame.grid_columnconfigure(0, weight=1)
     if not plagiarism_results:
         messagebox.showerror("No Results", "No plagiarism results to display.")
         return
