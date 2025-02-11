@@ -1,0 +1,533 @@
+HARVARD UNIVERSITY  
+OFFICE OF TECHNOLOGY DEVELOPMENT
+Startup Guide
+An entrepreneur’s guide for  
+Harvard University faculty, graduate students,  
+and postdoctoral fellows
+
+TABLE OF CONTENTS
+ Why Start a Company?    2
+ Key Considerations    5
+ Startup Process    6
+ Funding Sources    7
+ Presenting to Investors    8
+ Financing T erminology    10 
+ Company Considerations    13
+ Equity Considerations    14
+ Some Resources for Entrepreneurs    15
+ Key Factors for Success    16
+We have created this handbook to serve as a high-level guide and overview of some  
+key questions and issues that may confront you, the aspiring entrepreneur, as you begin 
+your quest to start a new company around innovations emanating from your lab.  
+Its purpose is not to supply all the answers, but rather to provide a starting point for 
+engaging you in a conversation with the Office of T echnology Development (OTD) 
+about your entrepreneurial journey.
+OTD works closely with Harvard faculty, graduate students, and postdoctoral fellows  
+to explore the potential of forming startup companies around new inventions and 
+platform technologies arising from their research. Creating a startup company, also 
+known as a NewCo, is a viable and often attractive alternative to working with an established company. A NewCo can expedite the development and commercialization 
+of nascent technologies that satisfy unmet market needs and benefit the public good.
+OTD has the entrepreneurial expertise to guide Harvard investigators through the 
+challenging process of organizing and starting a new company. Our team members have 
+extensive experience catalyzing and forming early-stage startup ventures, having 
+founded and secured funding for such companies, and have participated in successful company exits.
+I hope that you will make OTD your partner in pursuing your entrepreneurial vision: we 
+are eager to be your sounding board, to address your questions, and to guide you through the process of launching a new company. Please take the next step and stop by 
+OTD anytime to discuss your startup ideas. We encourage you to explore the potential 
+of entrepreneurship and become part of Harvard’s expanding startup ecosystem.
+Isaac T. Kohlberg  
+Senior Associate Provost  
+Chief T echnology Development Officer
+1
+Why Start a Company?
+When launching a new company, there are a 
+number of factors to take into consideration. 
+The reality is that only some inventions may 
+be suitable for the creation of a startup company. Innovations may progress more 
+quickly in a focused startup than in an 
+academic lab or a large company. Along with the invention team, OTD helps in analyzing 
+several factors to determine whether a 
+startup is the most appropriate path to commercialization:
+•  Demand: Potential of the core technology 
+to provide a solid platform for multiple 
+markets or product opportunities.
+•  Competition: Identification of other 
+companies that offer similar solutions.•  Licensing: Likelihood of interest from existing companies in licensing the technology.
+•  Funding: Availability of capital to build  and grow the business, together with  
+the interest, capabilities, and track record 
+of likely investors.
+• Commitment: Level of commitment and 
+involvement of the inventors.
+•  Support: Presence of a true business 
+champion for both the technology and  
+the new venture.
+•  Management: Experience, passion, and drive of the startup’s executive team.
+OFFICE OF TECHNOLOGY DEVELOPMENT
+OUR MISSION
+OTD’s mission is to make the fruits of Harvard research more accessible outside the 
+University, including underserved communities, and to ensure that society benefits from 
+Harvard innovations by fostering their swift, professional, and effective development  
+and commercialization.
+T o this end, OTD seeks to foster a spirit of innovation and entrepreneurship among the 
+faculty, harness the power of Harvard’s substantive intellectual property, and advance the 
+development of new discoveries made by the faculty for the good of society. Aspects of 
+our mission relevant to starting new companies include:
+Promoting Innovation and Entrepreneurship 
+Encouraging innovation and accelerating technology transfer in a manner consistent  
+with Harvard’s tradition of academic independence, public service, and commitment  
+to the community.
+Protecting and Harnessing Intellectual Property 
+Evaluating, patenting, licensing, and, when appropriate, creating startup companies 
+around new inventions and discoveries made by Harvard’s faculty.
+2
+ “OTD’s knowledge of what it takes to start a company is  
+ based on firsthand experience and was vital to our ability  
+ to get our NewCo off the ground. They were with us every  
+ step of the way, offering valuable guidance and feedback.”
+— GÖkHAN S. HOTAmISLIGIL
+ J.S. Simmons Professor of Genetics and metabolism  
+ Chair, Department of Genetics and Complex Diseases 
+ Harvard School of Public Health
+3
+  
+ “OTD was masterful in the initiation phase of the   
+ licensing process. Even more important, as our  
+ research progressed, they developed packages for  
+ a follow-on license that enabled the company to  
+ secure a major strategic corporate partnership.”
+— GrEGOry L. VErDINE
+ Erving Professor of Chemistry 
+ Department of Stem Cell and r egenerative Biology 
+ Harvard Faculty of Arts and Sciences
+4
+1 Is the invention a disruptive technology? 
+If not, how would it be categorized?
+2 How soon can a commercial product come to market?
+3 What is the level of risk associated with this startup?
+4 Does the technology have clear  applications and a definable market?
+5 Who owns the intellectual property  
+(IP)? For more information, refer  
+to OTD’s Inventor’s Handbook and  Harvard’s IP policies.
+6 What will be my role in the new com-pany: full–time employee, advisory board 
+member, executive, or consultant?
+7 What are the goals for the company?  Is it to grow the company and position it 
+for an acquisition or a possible initial public offering (IPO)? Or, is it to build a 
+small, yet sustainable business?
+8 Will capital from private investment 
+companies be needed? If so, will the 
+company eventually be sold or go  
+public? Private investors rely on these 
+exit strategies to get a return on their 
+investments.
+9 What is the current value of the com-pany? Pre-money valuations (valuation  
+of a company prior to an investment)  
+of early-stage companies are generally  
+in the $1–3 million range. Key Considerations
+Below are items to consider when deciding whether or not to start a NewCo: 
+ The valuations are based on several  
+factors, including:
+• In what stage of development is the  
+technology?
+• Is there proof-of-concept lab data?
+• Is there a working prototype?
+• Are there paying customers?
+OTD can help navigate these considerations. However, we strongly recommend speaking 
+with external advisors or mentors who can 
+provide additional perspectives and guidance. Once IP protection is in place, talk about  
+your ideas (with a confidentiality agreement in place, when appropriate); the more feedback you receive, the higher the likeli-hood of success.
+T alk to potential customers. The information 
+obtained by asking questions will provide 
+critical feedback that not only will increase confidence in the startup’s potential, but 
+also will enhance the likelihood of receiving 
+funding and, ultimately, the success of  
+the venture.
+• Who are your customers? 
+• What do they care about?
+• Can the company’s product(s) solve  
+their problems?
+• How are they currently addressing  
+the problems?
+• How does the technology solve their 
+problems in a unique way?
+• How large is the market?
+• How much are they willing to pay for  
+a solution?
+5
+Startup Process: Six Steps to Launch
+CONTACT OTD
+Discuss your invention and how to protect the intellectual property to decide 
+whether a startup company is a suitable option.
+PROTECT INTELLECTUAL PROPERTY 
+Work with OTD to file a patent application on the invention before it comes public.  A major asset of a startup company is its intellectual property. After public disclosure, obtaining a patent, particularly outside the United States , may no  longer be possible.
+SEEK INPUT AND NETWORK
+Identify a mentor and work with him or her regularly, network with like-minded entrepreneurs, review ideas with potential investors, and evaluate the commercial aspects with potential customers. OTD provides the resources to get started.
+PLAN THE BUSINESS
+Develop an understanding of the market potential, competition, funding needs,  and path to productization and profitability. OTD’s expertise is useful in providing guidance on competitive analysis, market assessment, and business planning.
+NEGOTIATE THE LICENSE OR OPTION AGREEMENT
+Obtain a license or option agreement from Harvard to demonstrate to potential investors that the company has secured the rights to the technology. OTD leads these negotiations along with an officer of the company.
+PURSUE FUNDING
+Commercializing technology typically requires external capital. Introduce the company to venture capitalists, angel investors, and, perhaps, friends and family. OTD assists in making connections with entrepreneurs, angel investors, and  venture capitalists.1
+2
+3
+4
+5
+6
+6
+Funding Sources
+When starting a company, generating funding 
+to support the business is perhaps the single 
+most important task at hand. Before embark -
+ing, it is necessary to determine how much 
+funding is required and from where it will 
+come. Here are some factors to consider in 
+determining how much funding is necessary: 
+• Time to market (that is, how long before 
+initial sales)
+• Employee salaries and benefits
+• Space
+• Equipment
+• Travel
+• Legal fees 
+Funding for the company may come from 
+one or more sources, including sales, grants, 
+and investors. For example:
+Organic Growth: Grow the business slowly 
+based on sales, without the need to raise external funds. Organic growth can be  
+a reasonable strategy for certain NewCo ventures. T ypically, however, university innovations are at such an early stage  
+of development that additional funds  
+are necessary to move them from the lab  
+to market.Friends and Family: It may be possible to 
+secure a small amount of funding from 
+friends and family to launch the business while additional funding is sought. 
+Small Business Innovation Research  
+(SBIR): Apply for research grants. The U.S. 
+government provides innovation research 
+grants to small companies, which can be great sources of initial capital. SBIr grants 
+can only be provided to a company, not 
+directly to an academic lab. For more information, visit www.sbir.gov.
+Angel Investors: Individuals or groups that 
+invest their own money in early-stage 
+companies. New England has a number of angel investor groups, including Launchpad, 
+CommonAngels, Hub Angels, and Boston 
+Harbor Angels. For a listing of angel groups in the region as well as other useful information, visit www.angelcapitalassociation.org/
+directory.
+Venture Capitalists: Venture capital firms 
+manage and invest the funds of other investors. OTD is familiar with venture 
+capitalists in New England and beyond, and 
+can help to establish connections within these firms. more information can be found 
+at www.newenglandvc.org.
+In 2005, Dr. Andrew myers and colleagues in Harvard’s Department of Chemistry and 
+Chemical Biology published results of their research on new classes of antibiotics aimed  at drug-resistant infections. OTD worked closely with Dr. myers to actively evaluate and pursue multiple commercialization alternatives. Extensive market, IP, and competitive  analyses were completed, leading OTD to initiate early development plans for a NewCo, including the commercialization strategy and the assembly of an initial investor syndicate. The efforts of OTD led to the launch of T etraphase Pharmaceuticals in 2006 with $25 million Series A financing to capitalize on this groundbreaking technology from Dr. myers.STARTUP SUCCESS STORY: T etraphase Pharmaceuticals
+7
+Presenting to Investors
+Presenting the idea along with the supporting 
+research to investors is an important step in 
+the startup process, and one that requires 
+thorough preparation. When scheduling a meeting with an investor, be very clear about 
+its purpose. An informational or exploratory 
+meeting may be acceptable, but be sure that the investor understands that this is the 
+intent of the meeting. If the purpose of the 
+meeting is to request funding, and the presentation team is not properly prepared, then subsequent meetings (and funding) are 
+unlikely. Include the following information  
+in the company pitch: 
+• What problem does the technology 
+address?
+• How does the technology provide  
+a solution?
+• What market is being pursued?  
+What is the addressable market? Do not 
+inflate data; if the idea is for a particular market segment, provide data for that 
+segment only. 
+ - market size
+ - T arget customer 
+ - market segment • What is the state of the intellectual 
+property? Is the technology well  
+protected? Will IP be needed from  
+other sources?
+• Who is the competition? Investors expect that there is competition in every market 
+area; claims of no competition are 
+generally met with disbelief. What is the competitive advantage? Why would 
+customers prefer the product or solution 
+being offered over another?
+• Who is on the executive team, and what 
+are their roles? Why should someone 
+invest in this team?
+• How does the business model relate  to the sales strategy and pricing? 
+• What are the expense and revenue projections for a five-year period?
+• What are the key company milestones?
+• How much money is being requested? 
+How long will it last? How will the funds 
+be spent? 
+The presentation should be interesting and 
+engaging. T ell a story and use examples.  
+If potential customers or partners have provided feedback, include examples.
+DFA is a not-for-profit organization established to translate early-stage technologies 
+developed in the lab of Dr. George Whitesides of Harvard’s Department of Chemistry  and Chemical Biology. DFA’s efforts will introduce innovative, affordable, and effective point-of-care diagnostic solutions to medical problems in the developing world. Honoring OTD’s and Harvard’s commitment to the principles of socially responsible licensing, OTD formed a collaborative and supportive relationship with DFA. This relationship represents a new paradigm for how a university can fulfill its public service mission by facilitating the rapid and specific maturation of innovation for deployment in the global health arena.STARTUP SUCCESS STORY: Diagnostics For All (DFA)
+8
+ “OTD negotiated a fair and reasonable licensing   
+ agreement with the NewCo that formed out of my  
+ lab. They were extremely helpful to us both in the  
+ initial stages of forming a company and beyond.”
+— ANDrEW G. m yErS
+ Amory Houghton Professor of Chemistry and Chemical Biology  
+ Department of Chemistry and Chemical Biology  
+ Harvard Faculty of Arts and Sciences
+9
+Financing T erminology
+Equity: The ownership interest of the company that is held by various parties. 
+Initially, the founders typically own 100 percent of the company. A license 
+agreement with Harvard and equity financing (in which someone provides 
+funding in exchange for a percentage of the company) often occur early  
+in the formation of a NewCo. At that time, the owners of the equity are the founders, the investors, and Harvard. The investor group will typically want  
+40 to 60 percent of the company, though the percentages can vary based  
+on a number of factors, and may be less for individual investors.  
+Ownership compared to control: Equity investors are generally in control of the 
+company. Provisions in the investment documents usually give the investors 
+authority over certain decisions, such as whether to accept an acquisition offer, 
+even if they have less than 50 percent of the outstanding shares. After a first 
+round of financing, the founders’ total equity percentage is often “diluted” to 
+less than 50 percent.
+Option pool: A percentage of stock options set aside for special purposes.  
+Sometimes, investors require that about 20 percent of the company’s options  
+be reserved to attract key employees.
+Pre- and post-money valuation: The company’s pre-money valuation is its 
+value before an investment is made. Pre-money valuation must be reasonable. 
+Post-money valuation is the pre-money valuation plus the amount invested.  
+For example, if investors provide $3 million and the pre-money valuation  
+is $2 million, the post-money valuation is $5 million. In this example, the 
+investors have 60 percent of the equity.
+Convertible debt: Funding that can be converted into shares at a later funding 
+round. Sometimes convertible debt is a good funding alternative. However, the 
+company immediately has debt on the balance sheet, and a valuation still must 
+be set in case additional funding rounds are not needed.
+10
+Preferred shares compared to common shares: Investors typically take  
+preferred shares, and the founders and employees hold common shares.  
+Preferred shareholders may have additional rights. For example, preferred 
+shareholders have the right to get a multiple of their investments back  
+(often one times the amount, but it can be higher) before any distribution  
+to other shareholders. This can be illustrated with a simple example in which  
+the preferred shareholders (investors) invested $5 million, they hold 50 percent 
+of the equity, have a 1X preference, and the startup is sold for $25 million.  
+In this case, the investors will first get $5 million, and then the remaining  
+$20 million is split according to the equity percentage of the shareholders:  
+$10 million to the investors, and $10 million to the common shareholders.   
+Anti-dilution: Protection against future financing when the value of the  
+company decreases (also referred to as a down-round). Anti-dilution ensures 
+that equity stakes do not drop below a certain percentage. The most common 
+is weighted average anti-dilution. Full ratchet protection may also be used at 
+times, and provides investors with the highest level of protection.
+ 
+ 
+Only some of the provisions and terminology of a financing term sheet are 
+referenced here, and these are not necessarily fully defined. More in-depth 
+listings, definitions, descriptions, and sample term sheets can be found on the 
+Internet. A mentor who is a seasoned entrepreneur is also an excellent source 
+of guidance. When negotiating a term sheet with investors, the company’s 
+principals should hire an attorney with relevant experience to represent them.
+11
+  
+ “OTD’s understanding of and insight into the  
+ formation of startup ventures were key to the  
+ successful formation and launch of our company.”
+— D AVID A. WEIT z
+ mallinckrodt Professor of Physics and of Applied Physics  
+ Harvard School of Engineering and Applied Sciences
+12
+Company Considerations
+Legal representation: OTD is not in a 
+position to provide legal advice, nor does  
+this document purport to lend legal advice. 
+Seeking counsel may be of great benefit in making the various decisions related to 
+starting a company. An attorney with 
+experience in business entity formation  and equity considerations can be a reliable 
+and trusted advisor.    
+Type of company: When incorporating, 
+choose among an S-Corp, C-Corp, or 
+Limited Liability Company (LLC). Companies that plan to take an equity investment 
+should generally be established as a  
+Delaware C-Corp.
+Board of directors and the advisory board: 
+Establish an advisory board early in the 
+launch process. An advisory board should be 
+three to four people who can provide guidance in areas with which the founders 
+are not familiar; for example, raising money, 
+hiring, sales, product development, and manufacturing. A board of directors should include one individual from the company, one or more investors, and independent industry representatives.
+Management team: Consider each founder’s 
+role in the management team. Generally, a 
+faculty member will have an advisory board 
+role, and a postdoctoral or PhD student may be the chief technology officer or the vice 
+president of research and development. 
+Other team members may be needed with strong domain expertise, sales experience, 
+and marketing know-how. Investors are 
+usually interested in a company with a strong management team; they are unlikely 
+to fund even the best ideas if the right team  
+is not in place.
+Space, insurance, and payroll: make  
+decisions about workspace, insurance, and payroll right away so that the team can 
+concentrate on building the product and  
+the business. Consider hiring an operations person or an assistant to manage these  
+items, renting shared office space, and outsourcing payroll. 
+  
+Crimson Hexagon was established to develop and commercialize a novel algorithm 
+developed by Dr. Gary king in Harvard’s Department of Government in the Faculty of  Arts and Sciences. Dr. king’s technology for sentiment analysis is an innovative means of gleaning opinions from unstructured text in ways that surpass existing approaches. Initially developed to determine sentiment on blogs about presidential candidates, its key marketable application is for companies to: 
+• Learn more about common perceptions of their products
+• receive real-time, ongoing information related to what is being written
+• Understand the opinions and sentiments of their customer base
+OTD worked closely with Dr. king to develop the initial business strategy of the company. 
+The initial funding for the company came from an angel investors group that OTD introduced to the company’s founding CEO. STARTUP SUCCESS STORY: Crimson Hexagon, Inc.
+13
+Equity Considerations
+When starting a company, the co-founders 
+should agree about how to split the equity.  
+A conversation of this nature should take 
+place early in the process, and agreement 
+should be formalized. Is the contribution of 
+each founder equal? Is the risk the same for 
+each founder? For example, is one founder 
+leaving a job to work full-time and unpaid  
+at the company, while another is continuing 
+in his or her current job until the startup is 
+able to raise money? 
+It is also important to consider reverse 
+vesting, where each founder’s equity  
+percentage becomes available over time.  
+If all the founders get all of their equity on 
+day one, and six months later one founder 
+leaves while other founders continue to work 
+for several more years, the equity will not be fairly distributed. r everse vesting allows an 
+individual to receive stock immediately, 
+which may be beneficial for tax reasons, but 
+still maintains vesting requirements, such as 
+length of employment, to be met.
+Consider if equity can and should be used to 
+pay for outside services. Legal counsel, marketing, and accounting professionals may take equity in lieu of cash. This type  
+of payment may seem useful before money 
+has been raised, but take note — it can be 
+extremely difficult to establish a fair amount of equity in exchange for such services.
+How much equity should be set aside for  
+the advisory board and for the board of 
+directors? T ypical amounts are one-quarter 
+to one-half percent for advisory board 
+members, and one-half to one percent  
+for directors.
+There are personal tax implications for 
+founders, depending on how equity is 
+granted. It is vital that you get legal advice 
+on these tax implications before incorporat -
+ing the company and issuing shares. Choose 
+legal counsel that has experience working 
+with startup companies.
+Harvard expects equity and other consider -
+ation, including royalties, in exchange for a 
+license to the IP. This equity is a minority 
+position and can include anti-dilution 
+provisions. Harvard does not invest money 
+directly in startup companies.
+Dr. David A. Weitz of Harvard’s School of Engineering and Applied Sciences is a  
+world-renowned expert in microfluidics and emulsions. His research led to the application of techniques in the field of DNA sequencing. Already a seasoned entrepreneur, Dr. Weitz approached OTD about starting a new company to commercialize his latest innovations. GnuBIO, Inc., was launched in 2010 to develop this next-generation sequencing technol-ogy for the molecular diagnostic and applied research markets. Working closely with  Dr. Weitz and the GnuBIO founding team, OTD made introductions to potential investors, advised the team on an appropriate capital structure, provided guidance on a fair distribu-tion of equity, and worked collaboratively with all parties to ensure a smooth and efficient negotiation of the license terms.STARTUP SUCCESS STORY: GnuBIO, Inc.
+14
+ 
+At Harvard
+OTD: The Office of T echnology Development 
+is responsible for Harvard-owned intellectual 
+property and takes an active role in working 
+with faculty, graduate students, and postdoc-toral entrepreneurs within the Harvard 
+community.
+TECH: The T echnology and Entrepreneurship 
+Center at Harvard works with undergradu-
+ate students to support and encourage their 
+entrepreneurial ideas, and runs an annual business plan competition.
+HBS Entrepreneurship Center: The Arthur 
+rock Center for Entrepreneurship at Harvard 
+Business School is a resource for HBS 
+students interested in company formation. 
+Harvard Innovation Lab: Launched in 2011, 
+the Innovation Lab is a resource for student entrepreneurs throughout the Harvard 
+community.
+Harvard Startups: A y ahoo! group that 
+provides resources for entrepreneurs and 
+business individuals to post questions, 
+information, jobs, and more. mainly targeted 
+at Harvard alumni.
+Commercializing Science and High  
+T echnology: An HBS class that is open  
+to students throughout the University,  
+one of several such entrepreneurial classes 
+at Harvard. Student teams work on  
+commercialization strategies for Harvard 
+research lab technologies.Around New England
+MIT Enterprise Forum: A forum that offers numerous events for entrepreneurs around 
+New England (no affiliation with mIT is 
+required).
+Cambridge Innovation Center: One of 
+several places that provide shared office 
+space for early-stage companies.
+T echStars:  A mentorship-driven seed-stage 
+investment program that runs in Boston and 
+other cities.
+Dogpatch Labs: Created by Polaris Venture 
+Partners to connect entrepreneurs and help founders conceive and launch startups.
+Betaspring:  A mentorship-driven startup 
+accelerator program for technology and 
+design entrepreneurs based in Providence, rI. 
+Blogs
+Numerous blogs exist that are great sources of information for the aspiring entrepreneur. 
+Browse the selection below for an introduc-
+tion to the ever-growing blogging world.
+• www.robgo.org
+• www.platformsandnetworks.blogspot.com 
+• www.founderresearch.blogspot.com 
+• www.bostonvcblog.typepad.com 
+• www.avc.com
+• www.feld.com/wp
+• www.steveblank.comSome Resources for Entrepreneurs
+15
+Key Factors for Success
+This guide provides an overview of the startup process and the relevant aspects of starting  
+a business. Of course, there are many additional sources of information. However, OTD is a 
+good place to start — our team can provide sound advice and guidance.
+Be sure to: 
+• Obtain trusted advice and mentorship.
+• Talk to customers.
+• Bring on the right team members.
+• Be passionate.
+• Prepare a one-minute elevator pitch that will grab someone’s attention and motivate  
+him or her to ask for more information.
+• Practice the company pitch.
+• Network with other entrepreneurs and representatives in the industry. 
+OTD can: 
+• Provide an initial sounding board for exploring startup ideas.
+• Protect the intellectual property that is the foundation of the new company.
+• Make introductions to entrepreneurs, angel investors, and venture capitalists.
+• Provide assistance with business planning.
+• Assist you on competitive analysis, market assessment, and investor pitches.
+In Cambridge
+(617) 495-3067 
+(617) 495-9568 fax
+Holyoke Center Suite 727E 
+1350 Massachusetts Avenue 
+Cambridge, MA 02138 USAIn Longwood 
+(617) 432-0920 
+(617) 432-2788 fax
+Gordon Hall Suite 414 
+25 Shattuck Street 
+Boston, MA 02115 USAHarvard University Office of T echnology Development  
+www.otd.harvard.edu
+16
+These logos represent a few of the many Harvard startups that OTD has helped launch.
+QSTREAM
+
+In Cambridge
+(617) 495-3067 
+(617) 495-9568 fax
+Holyoke Center Suite 727E 
+1350 Massachusetts Avenue 
+Cambridge, MA 02138 USAIn Longwood 
+(617) 432-0920 
+(617) 432-2788 fax
+Gordon Hall Suite 414 
+25 Shattuck Street 
+Boston, MA 02115 USAHarvard University Office of T echnology Development  
+www.otd.harvard.edu
+Copyright © 2011 The President and Fellows of Harvard College

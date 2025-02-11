@@ -87,7 +87,7 @@ def upload_files():
 
     messagebox.showinfo("Upload Complete", "Files uploaded and converted successfully.")
 
-def extract_copied_texts(file1, file2, threshold=0.7):
+def extract_copied_texts(file1, file2, min_similarity=0.7):
     with open(file1, encoding='utf-8') as f1, open(file2, encoding='utf-8') as f2:
         text1 = f1.read()
         text2 = f2.read()
@@ -95,15 +95,34 @@ def extract_copied_texts(file1, file2, threshold=0.7):
     matcher = SequenceMatcher(None, text1, text2)
     copied_texts = []
 
+    # Extract matching blocks with sufficient size and similarity
     for match in matcher.get_matching_blocks():
-        if match.size >= threshold * len(text1):
+        if match.size > 10:  # Minimum length for a meaningful match
             copied_text = text1[match.a:match.a + match.size].strip()
             if copied_text:
-                copied_texts.append({
-                    "source_document_1": os.path.basename(file1),
-                    "source_document_2": os.path.basename(file2),
-                    "copied_text": copied_text
-                })
+                # Calculate similarity for the matched block
+                block_similarity = matcher.real_quick_ratio()  # Approximate similarity
+                if block_similarity >= min_similarity:
+                    copied_texts.append({
+                        "source_document_1": os.path.basename(file1),
+                        "source_document_2": os.path.basename(file2),
+                        "copied_text": copied_text,
+                        "similarity": block_similarity
+                    })
+
+    # If no copied texts were found but similarity is above threshold, return placeholder
+    if not copied_texts:
+        # Re-calculate overall similarity using cosine similarity
+        embeds = MODEL.encode([text1, text2])
+        overall_similarity = cosine_similarity([embeds[0]], [embeds[1]])[0][0]
+        if overall_similarity >= min_similarity:
+            copied_texts.append({
+                "source_document_1": os.path.basename(file1),
+                "source_document_2": os.path.basename(file2),
+                "copied_text": "(No specific copied text detected, but overall similarity is high.)",
+                "similarity": overall_similarity
+            })
+
     return copied_texts
 
 def check_uploaded_files_plagiarism():
