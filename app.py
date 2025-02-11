@@ -23,6 +23,15 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
 from joblib import Parallel, delayed
 from collections import defaultdict
+from bs4 import BeautifulSoup  # For HTML
+from striprtf.striprtf import rtf_to_text
+from odf import text, teletype  # For ODT
+from odf.opendocument import load as odf_load  # For ODT
+from docx import Document  # For DOC (older versions)
+from ebooklib import epub  # For EPUB
+import mobi  # For MOBI (requires kindleunpack)
+from bs4 import BeautifulSoup  # For parsing HTML content in EPUB/MOBI
+import textract  # For extracting text from various formats, including LaTeX
 
 # Suppress warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -37,6 +46,132 @@ for folder in ["Pending", "Reports", "Screenshots"]:
     os.makedirs(folder, exist_ok=True)
 
 # File conversion functions (unchanged)
+def convert_epub_to_txt(epub_file, txt_file):
+    """Convert EPUB to plain text."""
+    book = epub.read_epub(epub_file)
+    text_content = ""
+    for item in book.get_items():
+        if item.get_type() == ebooklib.ITEM_DOCUMENT:
+            soup = BeautifulSoup(item.get_content(), "html.parser")
+            text_content += soup.get_text() + "\n"
+    with open(txt_file, "w", encoding="utf-8") as txt:
+        txt.write(text_content)
+
+def convert_mobi_to_txt(mobi_file, txt_file):
+    """Convert MOBI to plain text using kindleunpack."""
+    temp_dir = mobi.extract(mobi_file)  # Extracts MOBI to a temporary directory
+    epub_file = os.path.join(temp_dir, "mobi7", "content.opf")  # Locate the extracted EPUB
+    if os.path.exists(epub_file):
+        convert_epub_to_txt(epub_file, txt_file)
+    else:
+        raise ValueError("Failed to extract MOBI file.")
+
+def convert_latex_to_txt(latex_file, txt_file):
+    """Convert LaTeX to plain text using textract."""
+    try:
+        text_content = textract.process(latex_file, encoding="utf-8").decode("utf-8")
+        with open(txt_file, "w", encoding="utf-8") as txt:
+            txt.write(text_content)
+    except Exception as e:
+        print(f"Error converting LaTeX file: {e}")
+
+def convert_to_txt(input_file):
+    base_name = os.path.basename(os.path.splitext(input_file)[0])
+    output_file = os.path.join("Pending", f"{base_name}.txt")
+    ext = os.path.splitext(input_file)[-1].lower()
+    try:
+        if ext == ".docx":
+            convert_docx_to_txt(input_file, output_file)
+        elif ext == ".pdf":
+            convert_pdf_to_txt(input_file, output_file)
+        elif ext == ".txt":
+            with open(input_file, "r", encoding="utf-8") as f_in, \
+                 open(output_file, "w", encoding="utf-8") as f_out:
+                f_out.write(f_in.read())
+        elif ext == ".rtf":
+            convert_rtf_to_txt(input_file, output_file)
+        elif ext == ".odt":
+            convert_odt_to_txt(input_file, output_file)
+        elif ext == ".html":
+            convert_html_to_txt(input_file, output_file)
+        elif ext == ".doc":
+            convert_doc_to_txt(input_file, output_file)
+        elif ext == ".epub":
+            convert_epub_to_txt(input_file, output_file)
+        elif ext == ".mobi":
+            convert_mobi_to_txt(input_file, output_file)
+        elif ext == ".latex":
+            convert_latex_to_txt(input_file, output_file)
+        else:
+            raise ValueError(f"Unsupported file type: {ext}")
+    except Exception as e:
+        print(f"Error converting file: {e}")
+
+def convert_rtf_to_txt(rtf_file, txt_file):
+    """Convert RTF to plain text using striprtf."""
+    with open(rtf_file, "r", encoding="utf-8") as rtf:
+        rtf_content = rtf.read()
+    plain_text = rtf_to_text(rtf_content)
+    with open(txt_file, "w", encoding="utf-8") as txt:
+        txt.write(plain_text)
+    """Convert RTF to plain text using striprtf."""
+    with open(rtf_file, "r", encoding="utf-8") as rtf:
+        rtf_content = rtf.read()
+    plain_text = rtf_to_text(rtf_content)
+    with open(txt_file, "w", encoding="utf-8") as txt:
+        txt.write(plain_text)
+    """Convert RTF to plain text.""" 
+
+def convert_odt_to_txt(odt_file, txt_file):
+    """Convert ODT to plain text."""
+    doc = odf_load(odt_file)
+    texts = ""
+    for paragraph in doc.getElementsByType(text.P):
+        texts += teletype.extractText(paragraph) + "\n"
+    with open(txt_file, "w", encoding="utf-8") as txt:
+        txt.write(texts)
+
+def convert_html_to_txt(html_file, txt_file):
+    """Convert HTML to plain text."""
+    with open(html_file, "r", encoding="utf-8") as html:
+        soup = BeautifulSoup(html, "html.parser")
+        text_content = soup.get_text(separator="\n")
+    with open(txt_file, "w", encoding="utf-8") as txt:
+        txt.write(text_content)
+
+def convert_doc_to_txt(doc_file, txt_file):
+    """Convert DOC to plain text."""
+    document = Document(doc_file)
+    text_content = "\n".join([paragraph.text for paragraph in document.paragraphs])
+    with open(txt_file, "w", encoding="utf-8") as txt:
+        txt.write(text_content)
+
+def convert_to_txt(input_file):
+    base_name = os.path.basename(os.path.splitext(input_file)[0])
+    output_file = os.path.join("Pending", f"{base_name}.txt")
+    ext = os.path.splitext(input_file)[-1].lower()
+    try:
+        if ext == ".docx":
+            convert_docx_to_txt(input_file, output_file)
+        elif ext == ".pdf":
+            convert_pdf_to_txt(input_file, output_file)
+        elif ext == ".txt":
+            with open(input_file, "r", encoding="utf-8") as f_in, \
+                 open(output_file, "w", encoding="utf-8") as f_out:
+                f_out.write(f_in.read())
+        elif ext == ".rtf":
+            convert_rtf_to_txt(input_file, output_file)
+        elif ext == ".odt":
+            convert_odt_to_txt(input_file, output_file)
+        elif ext == ".html":
+            convert_html_to_txt(input_file, output_file)
+        elif ext == ".doc":
+            convert_doc_to_txt(input_file, output_file)
+        else:
+            raise ValueError(f"Unsupported file type: {ext}")
+    except Exception as e:
+        print(f"Error converting file: {e}")
+
 def convert_docx_to_txt(docx_file, txt_file):
     document = Document(docx_file)
     with open(txt_file, "w", encoding="utf-8") as txt:
