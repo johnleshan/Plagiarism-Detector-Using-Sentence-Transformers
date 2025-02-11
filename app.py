@@ -5,6 +5,12 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Suppress INFO and WARNING messages
 warnings.filterwarnings('ignore', category=DeprecationWarning)
 warnings.filterwarnings('ignore', module='tensorflow')
 import time
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+# Ensure NLTK resources are downloaded
+nltk.download('punkt')
+nltk.download('stopwords')
 import csv
 import warnings
 import numpy as np
@@ -32,6 +38,13 @@ from ebooklib import epub  # For EPUB
 import mobi  # For MOBI (requires kindleunpack)
 from bs4 import BeautifulSoup  # For parsing HTML content in EPUB/MOBI
 import textract  # For extracting text from various formats, including LaTeX
+from openpyxl import load_workbook
+import ezodf
+from pptx import Presentation
+import subprocess
+import xml.etree.ElementTree as ET
+import re
+from pptx import Presentation
 
 # Suppress warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -46,6 +59,104 @@ for folder in ["Pending", "Reports", "Screenshots"]:
     os.makedirs(folder, exist_ok=True)
 
 # File conversion functions (unchanged)
+def convert_markdown_to_txt(md_file, txt_file):
+    """Convert Markdown (.md or .markdown) to plain text."""
+    try:
+        with open(md_file, "r", encoding="utf-8") as md:
+            content = md.read()
+
+        # Strip Markdown syntax using regex
+        text_content = re.sub(r'\*|\_|\#|!\[.*?\]\(.*?\)|\[(.*?)\]\(.*?\)', '', content)
+        text_content = re.sub(r'\n{2,}', '\n', text_content).strip()
+
+        with open(txt_file, "w", encoding="utf-8") as txt:
+            txt.write(text_content)
+    except Exception as e:
+        print(f"Error converting Markdown file: {e}")
+
+def convert_xml_to_txt(xml_file, txt_file):
+    """Convert XML to plain text."""
+    try:
+        tree = ET.parse(xml_file)
+        root = tree.getroot()
+
+        def extract_text(element):
+            """Recursively extract text from XML elements."""
+            text = element.text.strip() if element.text else ""
+            for child in element:
+                text += " " + extract_text(child)
+            return text.strip()
+
+        text_content = extract_text(root)
+        with open(txt_file, "w", encoding="utf-8") as txt:
+            txt.write(text_content)
+    except Exception as e:
+        print(f"Error converting XML file: {e}")
+
+def convert_odp_to_txt(odp_file, txt_file):
+    """Convert ODP to plain text using unoconv."""
+    try:
+        subprocess.run(["unoconv", "-f", "txt", "-o", txt_file, odp_file], check=True)
+    except Exception as e:
+        print(f"Error converting ODP file: {e}")
+
+from pptx import Presentation
+
+def convert_pptx_to_txt(pptx_file, txt_file):
+    """Convert PPTX to plain text."""
+    try:
+        presentation = Presentation(pptx_file)
+        text_content = ""
+        for slide in presentation.slides:
+            for shape in slide.shapes:
+                if hasattr(shape, "text"):
+                    text_content += shape.text + "\n"
+        with open(txt_file, "w", encoding="utf-8") as txt:
+            txt.write(text_content.strip())
+    except Exception as e:
+        print(f"Error converting PPTX file: {e}")
+
+def convert_ods_to_txt(ods_file, txt_file):
+    """Convert ODS to plain text."""
+    try:
+        doc = ezodf.opendoc(ods_file)
+        text_content = ""
+        for sheet in doc.sheets:
+            text_content += f"Sheet: {sheet.name}\n"
+            for row in sheet.rows():
+                text_content += "\t".join([str(cell.value) if cell.value is not None else "" for cell in row]) + "\n"
+            text_content += "\n"
+        with open(txt_file, "w", encoding="utf-8") as txt:
+            txt.write(text_content)
+    except Exception as e:
+        print(f"Error converting ODS file: {e}")
+
+def convert_csv_to_txt(csv_file, txt_file):
+    """Convert CSV to plain text."""
+    try:
+        with open(csv_file, mode='r', encoding='utf-8') as csvfile, open(txt_file, "w", encoding="utf-8") as txt:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                txt.write("\t".join(row) + "\n")
+    except Exception as e:
+        print(f"Error converting CSV file: {e}")
+
+def convert_xlsx_to_txt(xlsx_file, txt_file):
+    """Convert XLSX to plain text."""
+    try:
+        workbook = load_workbook(xlsx_file, read_only=True)
+        text_content = ""
+        for sheet_name in workbook.sheetnames:
+            sheet = workbook[sheet_name]
+            text_content += f"Sheet: {sheet_name}\n"
+            for row in sheet.iter_rows(values_only=True):
+                text_content += "\t".join([str(cell) if cell is not None else "" for cell in row]) + "\n"
+            text_content += "\n"
+        with open(txt_file, "w", encoding="utf-8") as txt:
+            txt.write(text_content)
+    except Exception as e:
+        print(f"Error converting XLSX file: {e}")
+
 def convert_epub_to_txt(epub_file, txt_file):
     """Convert EPUB to plain text."""
     book = epub.read_epub(epub_file)
@@ -102,6 +213,20 @@ def convert_to_txt(input_file):
             convert_mobi_to_txt(input_file, output_file)
         elif ext == ".latex":
             convert_latex_to_txt(input_file, output_file)
+        elif ext == ".xlsx":
+            convert_xlsx_to_txt(input_file, output_file)
+        elif ext == ".csv":
+            convert_csv_to_txt(input_file, output_file)
+        elif ext == ".ods":
+            convert_ods_to_txt(input_file, output_file)
+        elif ext == ".pptx":
+            convert_pptx_to_txt(input_file, output_file)
+        elif ext == ".odp":
+            convert_odp_to_txt(input_file, output_file)
+        elif ext == ".xml":
+            convert_xml_to_txt(input_file, output_file)
+        elif ext in [".md", ".markdown"]:
+            convert_markdown_to_txt(input_file, output_file)
         else:
             raise ValueError(f"Unsupported file type: {ext}")
     except Exception as e:
@@ -146,32 +271,6 @@ def convert_doc_to_txt(doc_file, txt_file):
     with open(txt_file, "w", encoding="utf-8") as txt:
         txt.write(text_content)
 
-def convert_to_txt(input_file):
-    base_name = os.path.basename(os.path.splitext(input_file)[0])
-    output_file = os.path.join("Pending", f"{base_name}.txt")
-    ext = os.path.splitext(input_file)[-1].lower()
-    try:
-        if ext == ".docx":
-            convert_docx_to_txt(input_file, output_file)
-        elif ext == ".pdf":
-            convert_pdf_to_txt(input_file, output_file)
-        elif ext == ".txt":
-            with open(input_file, "r", encoding="utf-8") as f_in, \
-                 open(output_file, "w", encoding="utf-8") as f_out:
-                f_out.write(f_in.read())
-        elif ext == ".rtf":
-            convert_rtf_to_txt(input_file, output_file)
-        elif ext == ".odt":
-            convert_odt_to_txt(input_file, output_file)
-        elif ext == ".html":
-            convert_html_to_txt(input_file, output_file)
-        elif ext == ".doc":
-            convert_doc_to_txt(input_file, output_file)
-        else:
-            raise ValueError(f"Unsupported file type: {ext}")
-    except Exception as e:
-        print(f"Error converting file: {e}")
-
 def convert_docx_to_txt(docx_file, txt_file):
     document = Document(docx_file)
     with open(txt_file, "w", encoding="utf-8") as txt:
@@ -183,6 +282,22 @@ def convert_pdf_to_txt(pdf_file, txt_file):
     with open(txt_file, "w", encoding="utf-8") as txt:
         for page in reader.pages:
             txt.write(page.extract_text() + "\n")
+
+from pptx import Presentation
+
+def convert_pptx_to_txt(pptx_file, txt_file):
+    """Convert PPTX to plain text."""
+    try:
+        presentation = Presentation(pptx_file)
+        text_content = ""
+        for slide in presentation.slides:
+            for shape in slide.shapes:
+                if hasattr(shape, "text"):
+                    text_content += shape.text + "\n"
+        with open(txt_file, "w", encoding="utf-8") as txt:
+            txt.write(text_content.strip())
+    except Exception as e:
+        print(f"Error converting PPTX file: {e}")
 
 def convert_to_txt(input_file):
     base_name = os.path.basename(os.path.splitext(input_file)[0])
@@ -197,6 +312,8 @@ def convert_to_txt(input_file):
             with open(input_file, "r", encoding="utf-8") as f_in:
                 with open(output_file, "w", encoding="utf-8") as f_out:
                     f_out.write(f_in.read())
+        elif ext == ".pptx":  # New addition for PowerPoint files
+            convert_pptx_to_txt(input_file, output_file)
         else:
             raise ValueError(f"Unsupported file type: {ext}")
     except Exception as e:
@@ -378,15 +495,6 @@ def check_uploaded_files_plagiarism():
 
     except Exception as e:
         messagebox.showerror("Error", f"An error occurred during the plagiarism check: {e}")
-
-import nltk
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-
-# Ensure NLTK resources are downloaded
-nltk.download('punkt')
-nltk.download('stopwords')
-
 def extract_keywords(text, num_keywords=5):
     # Tokenize the text into words
     words = word_tokenize(text.lower())
