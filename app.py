@@ -226,217 +226,75 @@ def check_uploaded_files_plagiarism():
         messagebox.showerror("Error", f"An error occurred during the plagiarism check: {e}")
 
 def show_copied_texts():
-    """Display results in command-line format within a single UI window"""
     if not plagiarism_results:
         messagebox.showerror("No Results", "No plagiarism results to display.")
         return
 
-    # Create single window
     result_window = customtkinter.CTkToplevel()
     result_window.title("Plagiarism Results - Command Line Format")
     result_window.geometry("1200x800")
     result_window.state("zoomed")
-
-    # Create main frame
     main_frame = customtkinter.CTkFrame(result_window)
     main_frame.pack(fill="both", expand=True, padx=10, pady=10)
-
-    # Create text widget with scrollbar
     text_widget = tk.Text(main_frame, wrap="word", font=("Consolas", 12))
     scrollbar = customtkinter.CTkScrollbar(main_frame, command=text_widget.yview)
     text_widget.configure(yscrollcommand=scrollbar.set)
-
-    # Layout using grid
     text_widget.grid(row=0, column=0, sticky="nsew")
     scrollbar.grid(row=0, column=1, sticky="ns")
-    
-    # Configure grid weights
     main_frame.grid_rowconfigure(0, weight=1)
     main_frame.grid_columnconfigure(0, weight=1)
 
-    # Add command-line style content
+    # Header for the results
     text_widget.insert("end", "\nPlagiarism Results:\n")
     text_widget.insert("end", "{:<10} {:<30} {:<30} {:<20}\n".format(
-        "ID", "Source Document", "Copied Document", "Similarity Score"))
-    text_widget.insert("end", "-"*100 + "\n")
-    
+        "ID", "Source Document", "Copied Document", "Similarity Score"
+    ))
+    text_widget.insert("end", "-" * 100 + "\n")
+
     id_counter = 1
+    shown_copied_texts = set()  # Track already shown copied texts
+
     for result in plagiarism_results:
         if result["Plagiarism Status"] == "Flagged":
             source_doc = result["Assignment 1"]
             copied_doc = result["Assignment 2"]
             sim_score = float(result["Similarity Score"])
-            
-            # Add main result line
-            text_widget.insert("end", "{:<10} {:<30} {:<30} {:.2f}\n".format(
-                id_counter, source_doc, copied_doc, sim_score))
-            
-            # Add document contents
-            try:
-                with open(os.path.join("Pending", source_doc), 'r', encoding='utf-8') as f1, \
-                     open(os.path.join("Pending", copied_doc), 'r', encoding='utf-8') as f2:
-                    text_widget.insert("end", f"\nSource Text ({source_doc}):\n{f1.read()}\n")
-                    text_widget.insert("end", f"\nCopied Text ({copied_doc}):\n{f2.read()}\n")
-                    text_widget.insert("end", "-"*100 + "\n\n")
-                    
-                id_counter += 1
-            except Exception as e:
-                text_widget.insert("end", f"\nError loading documents: {str(e)}\n")
 
-    # Configure text colors based on theme
+            # Display flagged pair information
+            text_widget.insert("end", "{:<10} {:<30} {:<30} {:.2f}\n".format(
+                id_counter, source_doc, copied_doc, sim_score
+            ))
+
+            file1 = os.path.join("Pending", source_doc)
+            file2 = os.path.join("Pending", copied_doc)
+            copied_texts = extract_copied_texts(file1, file2)
+
+            if copied_texts:
+                for copied_text in copied_texts:
+                    # Ensure the copied text is not already shown
+                    if copied_text['copied_text'] not in shown_copied_texts:
+                        text_widget.insert("end", f"\nHighlighted Copied Text:\n{copied_text['copied_text']}\n")
+                        shown_copied_texts.add(copied_text['copied_text'])  # Mark as shown
+            else:
+                text_widget.insert("end", "\nNo specific copied texts detected, but similarity is above threshold.\n")
+
+            text_widget.insert("end", "-" * 100 + "\n\n")
+            id_counter += 1
+
+    # Configure text widget appearance
     text_color = "#FFFFFF" if customtkinter.get_appearance_mode() == "Dark" else "#000000"
     text_widget.configure(fg=text_color, bg=main_frame.cget("fg_color"))
-    
-    # Make text widget read-only
     text_widget.configure(state="disabled")
-    
-    # Add close button
+
+    # Close button
     close_btn = customtkinter.CTkButton(
-        main_frame, 
-        text="Close Window", 
+        main_frame,
+        text="Close Window",
         command=result_window.destroy,
         fg_color="#4CAF50",
         hover_color="#45a049"
     )
     close_btn.grid(row=1, column=0, pady=10)
-    if not plagiarism_results:
-        messagebox.showerror("No Results", "No plagiarism results to display.")
-        return
-
-    copied_texts_window = customtkinter.CTkToplevel()
-    copied_texts_window.title("Copied Texts and Source Documents")
-    copied_texts_window.geometry("1200x800")
-    copied_texts_window.state("zoomed")
-
-    main_frame = customtkinter.CTkFrame(copied_texts_window)
-    main_frame.pack(fill="both", expand=True, padx=0, pady=0)
-
-    canvas = tk.Canvas(main_frame)
-    scrollbar = customtkinter.CTkScrollbar(main_frame, orientation="vertical", command=canvas.yview)
-    scrollable_frame = customtkinter.CTkFrame(canvas)
-
-    scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw", width=copied_texts_window.winfo_width())
-    canvas.configure(yscrollcommand=scrollbar.set)
-
-    def _on_mousewheel(event):
-        canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
-    canvas.bind_all("<MouseWheel>", _on_mousewheel)
-
-    canvas.pack(side="left", fill="both", expand=True)
-    scrollbar.pack(side="right", fill="y")
-
-    flagged_documents = []
-    processed_pairs_global = set()
-
-    for result in plagiarism_results:
-        if result["Plagiarism Status"] == "Flagged":
-            pair_key = tuple(sorted((result["Assignment 1"], result["Assignment 2"])))
-            if pair_key not in processed_pairs_global:
-                flagged_documents.append(result)
-                processed_pairs_global.add(pair_key)
-
-    if not flagged_documents:
-        no_results_label = customtkinter.CTkLabel(scrollable_frame, text="No flagged documents found.", font=("Arial", 14))
-        no_results_label.pack(pady=10)
-        return
-
-    pairs_per_page = 10
-    current_page = 0
-    total_pages = (len(flagged_documents) + pairs_per_page - 1) // pairs_per_page
-
-    def display_page(page):
-        for widget in scrollable_frame.winfo_children():
-            widget.destroy()
-
-        start_idx = page * pairs_per_page
-        end_idx = min((page + 1) * pairs_per_page, len(flagged_documents))
-
-        for i in range(start_idx, end_idx):
-            result = flagged_documents[i]
-            file1 = os.path.join("Pending", result["Assignment 1"])
-            file2 = os.path.join("Pending", result["Assignment 2"])
-
-            copied_texts = extract_copied_texts(file1, file2)
-
-            document_frame = customtkinter.CTkFrame(scrollable_frame)
-            document_frame.pack(fill="x", padx=10, pady=10)
-
-            source_label = customtkinter.CTkLabel(
-                document_frame,
-                text=f"Source Documents: {result['Assignment 1']} and {result['Assignment 2']}",
-                font=("Arial", 14, "bold"),
-                text_color="#4CAF50" if customtkinter.get_appearance_mode() == "Dark" else "#2E2E2E"
-            )
-            source_label.pack(anchor="w", padx=10, pady=(10, 5))
-
-            separator = tk.Frame(document_frame, height=2, bg="gray")
-            separator.pack(fill="x", padx=10, pady=5)
-
-            if copied_texts:
-                for copied_text in copied_texts:
-                    text_frame = customtkinter.CTkFrame(document_frame)
-                    text_frame.pack(fill="x", padx=20, pady=5)
-                    copied_text_label = customtkinter.CTkLabel(
-                        text_frame,
-                        text=f"Copied Text:\n{copied_text['copied_text']}",
-                        font=("Arial", 12),
-                        wraplength=1000,
-                        justify="left",
-                        text_color="#333333",
-                        fg_color="#F0F0F0",
-                        corner_radius=5
-                    )
-                    copied_text_label.pack(anchor="w", padx=10, pady=5, fill="x")
-            else:
-                no_text_frame = customtkinter.CTkFrame(document_frame)
-                no_text_frame.pack(fill="x", padx=20, pady=5)
-                no_text_label = customtkinter.CTkLabel(
-                    no_text_frame,
-                    text="No specific copied texts detected, but similarity is above threshold.",
-                    font=("Arial", 12, "italic"),
-                    text_color="#666666"
-                )
-                no_text_label.pack(anchor="w", padx=10, pady=5)
-
-            separator = tk.Frame(scrollable_frame, height=2, bg="gray")
-            separator.pack(fill="x", padx=10, pady=10)
-
-        canvas.configure(scrollregion=canvas.bbox("all"))
-
-    pagination_frame = customtkinter.CTkFrame(main_frame)
-    pagination_frame.pack(fill="x", padx=10, pady=10)
-
-    def update_buttons():
-        prev_button.configure(state="normal" if current_page > 0 else "disabled")
-        next_button.configure(state="normal" if current_page < total_pages - 1 else "disabled")
-        page_label.configure(text=f"Page {current_page + 1} of {total_pages}")
-
-    def next_page():
-        nonlocal current_page
-        if current_page < total_pages - 1:
-            current_page += 1
-            display_page(current_page)
-            update_buttons()
-
-    def prev_page():
-        nonlocal current_page
-        if current_page > 0:
-            current_page -= 1
-            display_page(current_page)
-            update_buttons()
-
-    prev_button = customtkinter.CTkButton(pagination_frame, text="Previous", command=prev_page, state="disabled")
-    prev_button.pack(side="left", padx=10)
-
-    page_label = customtkinter.CTkLabel(pagination_frame, text="")
-    page_label.pack(side="left", expand=True)
-
-    next_button = customtkinter.CTkButton(pagination_frame, text="Next", command=next_page, state="normal" if total_pages > 1 else "disabled")
-    next_button.pack(side="right", padx=10)
-
-    display_page(current_page)
-    update_buttons()
 
 def export_report():
     if not plagiarism_results:
