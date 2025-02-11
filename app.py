@@ -271,6 +271,77 @@ def show_copied_texts():
     text_widget.insert("end", "-" * 100 + "\n")
 
     id_counter = 1
+
+    for result in plagiarism_results:
+        if result["Plagiarism Status"] == "Flagged":
+            source_doc = result["Assignment 1"]
+            copied_doc = result["Assignment 2"]
+            sim_score = float(result["Similarity Score"])
+
+            # Display flagged pair information
+            text_widget.insert("end", "{:<10} {:<30} {:<30} {:.2f}\n".format(
+                id_counter, source_doc, copied_doc, sim_score
+            ))
+
+            file1 = os.path.join("Pending", source_doc)
+            file2 = os.path.join("Pending", copied_doc)
+            copied_texts = extract_copied_texts(file1, file2)
+
+            if copied_texts:
+                # Add a single "Highlighted Copied Text" heading
+                text_widget.insert("end", "\nHighlighted Copied Text:\n")
+
+                # Append all copied texts under this heading
+                for copied_text in copied_texts:
+                    text_widget.insert("end", f"{copied_text['copied_text']}\n")
+
+            else:
+                # If no specific copied texts are detected but similarity is high
+                text_widget.insert("end", "\n(No specific copied text detected, but overall similarity is high.)\n")
+
+            text_widget.insert("end", "-" * 100 + "\n\n")
+            id_counter += 1
+
+    # Configure text widget appearance
+    text_color = "#FFFFFF" if customtkinter.get_appearance_mode() == "Dark" else "#000000"
+    text_widget.configure(fg=text_color, bg=main_frame.cget("fg_color"))
+    text_widget.configure(state="disabled")
+
+    # Close button
+    close_btn = customtkinter.CTkButton(
+        main_frame,
+        text="Close Window",
+        command=result_window.destroy,
+        fg_color="#4CAF50",
+        hover_color="#45a049"
+    )
+    close_btn.grid(row=1, column=0, pady=10)
+    if not plagiarism_results:
+        messagebox.showerror("No Results", "No plagiarism results to display.")
+        return
+
+    result_window = customtkinter.CTkToplevel()
+    result_window.title("Plagiarism Results - Command Line Format")
+    result_window.geometry("1200x800")
+    result_window.state("zoomed")
+    main_frame = customtkinter.CTkFrame(result_window)
+    main_frame.pack(fill="both", expand=True, padx=10, pady=10)
+    text_widget = tk.Text(main_frame, wrap="word", font=("Consolas", 12))
+    scrollbar = customtkinter.CTkScrollbar(main_frame, command=text_widget.yview)
+    text_widget.configure(yscrollcommand=scrollbar.set)
+    text_widget.grid(row=0, column=0, sticky="nsew")
+    scrollbar.grid(row=0, column=1, sticky="ns")
+    main_frame.grid_rowconfigure(0, weight=1)
+    main_frame.grid_columnconfigure(0, weight=1)
+
+    # Header for the results
+    text_widget.insert("end", "\nPlagiarism Results:\n")
+    text_widget.insert("end", "{:<10} {:<30} {:<30} {:<20}\n".format(
+        "ID", "Source Document", "Copied Document", "Similarity Score"
+    ))
+    text_widget.insert("end", "-" * 100 + "\n")
+
+    id_counter = 1
     shown_copied_texts = set()  # Track already shown copied texts
 
     for result in plagiarism_results:
