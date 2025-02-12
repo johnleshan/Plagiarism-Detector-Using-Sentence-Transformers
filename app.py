@@ -223,6 +223,53 @@ def convert_pdf_to_txt(pdf_file, txt_file):
             txt.write(page.extract_text() + "\n")
 
 def convert_to_txt(input_file):
+    start_time = time.time()  # Start timing
+    base_name = os.path.basename(os.path.splitext(input_file)[0])
+    output_file = os.path.join("Pending", f"{base_name}.txt")
+    ext = os.path.splitext(input_file)[-1].lower()
+    try:
+        if ext == ".docx":
+            convert_docx_to_txt(input_file, output_file)
+        elif ext == ".pdf":
+            convert_pdf_to_txt(input_file, output_file)
+        elif ext == ".txt":
+            with open(input_file, "r", encoding="utf-8") as f_in, \
+                 open(output_file, "w", encoding="utf-8") as f_out:
+                f_out.write(f_in.read())
+        elif ext == ".rtf":
+            convert_rtf_to_txt(input_file, output_file)
+        elif ext == ".odt":
+            convert_odt_to_txt(input_file, output_file)
+        elif ext == ".html":
+            convert_html_to_txt(input_file, output_file)
+        elif ext == ".doc":
+            convert_doc_to_txt(input_file, output_file)
+        elif ext == ".epub":
+            convert_epub_to_txt(input_file, output_file)
+        elif ext == ".mobi":
+            convert_mobi_to_txt(input_file, output_file)
+        elif ext == ".latex":
+            convert_latex_to_txt(input_file, output_file)
+        elif ext == ".xlsx":
+            convert_xlsx_to_txt(input_file, output_file)
+        elif ext == ".csv":
+            convert_csv_to_txt(input_file, output_file)
+        elif ext == ".ods":
+            convert_ods_to_txt(input_file, output_file)
+        elif ext == ".pptx":
+            convert_pptx_to_txt(input_file, output_file)
+        elif ext == ".odp":
+            convert_odp_to_txt(input_file, output_file)
+        elif ext == ".xml":
+            convert_xml_to_txt(input_file, output_file)
+        elif ext in [".md", ".markdown"]:
+            convert_markdown_to_txt(input_file, output_file)
+        else:
+            raise ValueError(f"Unsupported file type: {ext}")
+    except Exception as e:
+        print(f"Error converting file: {e}")
+    elapsed_time = time.time() - start_time  # Calculate elapsed time
+    print(f"File conversion for '{input_file}' took {elapsed_time:.2f} seconds.")
     """Convert various file types to plain text."""
     base_name = os.path.basename(os.path.splitext(input_file)[0])
     output_file = os.path.join("Pending", f"{base_name}.txt")
@@ -414,37 +461,46 @@ def extract_keywords(text, num_keywords=5):
     return [word for word, _ in freq_dist.most_common(num_keywords)]
 
 def show_copied_texts():
-    """Show copied texts in a new window."""
     if not plagiarism_results:
         messagebox.showerror("No Results", "No plagiarism results to display.")
         return
+
     result_window = customtkinter.CTkToplevel()
     result_window.title("Plagiarism Results - Command Line Format")
     result_window.geometry("1200x800")
     result_window.state("zoomed")
+
     main_frame = customtkinter.CTkFrame(result_window)
     main_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
     text_widget = tk.Text(main_frame, wrap="word", font=("Consolas", 12))
     scrollbar = customtkinter.CTkScrollbar(main_frame, command=text_widget.yview)
     text_widget.configure(yscrollcommand=scrollbar.set)
     text_widget.grid(row=0, column=0, sticky="nsew")
     scrollbar.grid(row=0, column=1, sticky="ns")
+
     main_frame.grid_rowconfigure(0, weight=1)
     main_frame.grid_columnconfigure(0, weight=1)
+
+    # Header for the results
     text_widget.insert("end", "\nPlagiarism Results:\n")
     text_widget.insert("end", "{:<10} {:<30} {:<30} {:<20}\n".format(
         "ID", "Source Document", "Copied Document", "Similarity Score"
     ))
     text_widget.insert("end", "-" * 100 + "\n")
+
     id_counter = 1
     for result in plagiarism_results:
         if result["Plagiarism Status"] == "Flagged":
             source_doc = result["Assignment 1"]
             copied_doc = result["Assignment 2"]
             sim_score = float(result["Similarity Score"])
+
+            # Display flagged pair information
             text_widget.insert("end", "{:<10} {:<30} {:<30} {:.2f}\n".format(
                 id_counter, source_doc, copied_doc, sim_score
             ))
+
             file1 = os.path.join("Pending", source_doc)
             file2 = os.path.join("Pending", copied_doc)
             copied_texts = extract_copied_texts(file1, file2)
@@ -463,11 +519,20 @@ def show_copied_texts():
                     text_widget.insert("end", ", ".join(keywords) + "\n")
                 else:
                     text_widget.insert("end", "(No keywords could be extracted.)\n")
+
             text_widget.insert("end", "-" * 100 + "\n\n")
             id_counter += 1
-    text_color = "#FFFFFF" if customtkinter.get_appearance_mode() == "Dark" else "#000000"
-    text_widget.configure(fg=text_color, bg=main_frame.cget("fg_color"))
+
+    # Configure text widget appearance dynamically
+    current_mode = customtkinter.get_appearance_mode()
+    if current_mode == "Dark":
+        text_widget.configure(fg="white", bg="black")
+    else:
+        text_widget.configure(fg="black", bg="white")
+
     text_widget.configure(state="disabled")
+
+    # Close button
     close_btn = customtkinter.CTkButton(
         main_frame,
         text="Close Window",
