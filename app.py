@@ -320,17 +320,26 @@ uploaded_files = []
 plagiarism_results = []
 
 def upload_files():
-    """Upload and convert files to plain text."""
     filepaths = askopenfilenames(filetypes=[("All files", "*.*")])
     if not filepaths:
         return
+
     global uploaded_files
     uploaded_files = []
+
+    # Start timing for total conversion
+    start_time = time.time()
+
     for filepath in filepaths:
         base_name = os.path.basename(filepath)
         txt_path = os.path.join("Pending", f"{os.path.splitext(base_name)[0]}.txt")
-        convert_to_txt(filepath)
+        convert_to_txt(filepath)  # Convert each file to text
         uploaded_files.append(txt_path)
+
+    # Calculate total conversion time
+    total_conversion_time = time.time() - start_time
+    print(f"Total file conversion time: {total_conversion_time:.2f} seconds")
+
     messagebox.showinfo("Upload Complete", "Files uploaded and converted successfully.")
 
 def extract_copied_texts(file1, file2, min_similarity=0.7):
@@ -365,17 +374,21 @@ def extract_copied_texts(file1, file2, min_similarity=0.7):
     return copied_texts
 
 def check_uploaded_files_plagiarism():
-    """Check plagiarism among uploaded files."""
     global uploaded_files, plagiarism_results
     if not uploaded_files:
         messagebox.showwarning("No Files", "No files have been uploaded.")
         return
+
     try:
         corrupt_folder = os.path.join("Pending", "corrupt documents")
         os.makedirs(corrupt_folder, exist_ok=True)
         valid_files = []
         corrupted_files = []
         file_contents = []
+
+        # Start timing for plagiarism check
+        start_time = time.time()
+
         for file in uploaded_files:
             try:
                 with open(file, encoding='utf-8') as f:
@@ -385,7 +398,6 @@ def check_uploaded_files_plagiarism():
                     corrupt_file_path = os.path.join(corrupt_folder, file_name)
                     os.rename(file, corrupt_file_path)
                     corrupted_files.append(file_name)
-                    messagebox.showwarning("Empty File", f"The file {file_name} is empty and has been moved to 'corrupt documents'.")
                     continue
                 file_contents.append(content)
                 valid_files.append(file)
@@ -394,21 +406,41 @@ def check_uploaded_files_plagiarism():
                 corrupt_file_path = os.path.join(corrupt_folder, file_name)
                 os.rename(file, corrupt_file_path)
                 corrupted_files.append(file_name)
-                messagebox.showwarning("File Access Error", f"The file {file_name} could not be accessed and has been moved to 'corrupt documents'. Error: {e}")
+
         if not file_contents:
             messagebox.showerror("Empty Files", "All uploaded files are empty, corrupted, or contain no meaningful content.")
             return
+
+        # Generate embeddings
+        embeddings_start = time.time()
         embeddings = MODEL.encode(file_contents)
+        embedding_time = time.time() - embeddings_start
+
+        # Cluster optimization
+        cluster_start = time.time()
         optimal_clusters = optimal_cluster_count(embeddings)
         kmeans = MiniBatchKMeans(n_clusters=optimal_clusters, random_state=42, batch_size=100)
         clusters = kmeans.fit_predict(embeddings)
+        clustering_time = time.time() - cluster_start
+
+        # Group documents by cluster
         cluster_groups = defaultdict(list)
         for idx, cluster_id in enumerate(clusters):
             cluster_groups[cluster_id].append((valid_files[idx], embeddings[idx]))
+
+        # Parallel comparison
+        compare_start = time.time()
         results = Parallel(n_jobs=-1, prefer="threads")(
             delayed(cluster_comparison)(cluster) for cluster in cluster_groups.values()
         )
+        comparison_time = time.time() - compare_start
+
         plagiarism_results = [item for sublist in results for item in sublist]
+
+        # Log total time
+        total_time = time.time() - start_time
+        print(f"Plagiarism check completed. Embedding time: {embedding_time:.2f}s, Clustering time: {clustering_time:.2f}s, Comparison time: {comparison_time:.2f}s, Total time: {total_time:.2f}s")
+
         if corrupted_files:
             messagebox.showinfo(
                 "Plagiarism Check Complete",
@@ -523,14 +555,14 @@ def show_copied_texts():
             text_widget.insert("end", "-" * 100 + "\n\n")
             id_counter += 1
 
-    # Configure text widget appearance dynamically
+    # Dynamically configure text widget appearance based on appearance mode
     current_mode = customtkinter.get_appearance_mode()
     if current_mode == "Dark":
-        text_widget.configure(fg="white", bg="black")
+        text_widget.configure(fg="white", bg="black")  # Dark mode colors
     else:
-        text_widget.configure(fg="black", bg="white")
+        text_widget.configure(fg="black", bg="white")  # Light mode colors
 
-    text_widget.configure(state="disabled")
+    text_widget.configure(state="disabled")  # Make the text widget read-only
 
     # Close button
     close_btn = customtkinter.CTkButton(
