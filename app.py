@@ -493,10 +493,12 @@ def cluster_comparison(cluster_docs):
         for j in range(i + 1, sim_matrix.shape[1]):
             if sim_matrix[i, j] >= 0.7:
                 pair = sorted([os.path.basename(filenames[i]), os.path.basename(filenames[j])])
+                # Convert similarity score to percentage
+                similarity_percentage = int(sim_matrix[i, j] * 100)  # Convert to integer percentage
                 results.append({
                     "Assignment 1": pair[0],
                     "Assignment 2": pair[1],
-                    "Similarity Score": f"{sim_matrix[i, j]:.2f}",
+                    "Similarity Score": f"{similarity_percentage}%",  # Format as percentage
                     "Plagiarism Status": "Flagged"
                 })
     return results
@@ -537,16 +539,14 @@ def show_copied_texts():
         "ID", "Source Document", "Copied Document", "Similarity Score"
     ))
     text_widget.insert("end", "-" * 100 + "\n")
-
     id_counter = 1
+
     for result in plagiarism_results:
         if result["Plagiarism Status"] == "Flagged":
             source_doc = result["Assignment 1"]
             copied_doc = result["Assignment 2"]
-            sim_score = float(result["Similarity Score"])
-
-            # Display flagged pair information
-            text_widget.insert("end", "{:<10} {:<30} {:<30} {:.2f}\n".format(
+            sim_score = result["Similarity Score"]  # Already formatted as percentage
+            text_widget.insert("end", "{:<10} {:<30} {:<30} {}\n".format(
                 id_counter, source_doc, copied_doc, sim_score
             ))
 
@@ -569,13 +569,11 @@ def show_copied_texts():
                 else:
                     text_widget.insert("end", "(No keywords could be extracted.)\n")
 
-            text_widget.insert("end", "-" * 100 + "\n\n")
+            text_widget.insert("end", "-" * 100 + "\n")
             id_counter += 1
 
     # Dynamically configure text widget appearance based on appearance mode
     current_mode = customtkinter.get_appearance_mode()
-    tooltip_text = "Switch to Light Mode" if current_mode == "Dark" else "Switch to Dark Mode"
-    Tooltip(btn_toggle_mode, tooltip_text)
     if current_mode == "Dark":
         text_widget.configure(fg="white", bg="black")  # Dark mode colors
     else:
