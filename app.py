@@ -52,6 +52,19 @@ def is_package_available(package_name):
     except LookupError:
         return False
 
+# Helper functions to manage progress bars dynamically
+def show_progress_bar(parent, row, column, width=400, height=10):
+    """Show a progress bar at the specified grid position."""
+    progress = customtkinter.CTkProgressBar(parent, width=width, height=height, mode="determinate", progress_color="#4CAF50")
+    progress.grid(row=row, column=column, padx=(100, 20), pady=(0, 10), sticky="ew")  # Equal padding on both sides
+    progress.set(0)
+    return progress
+
+def hide_progress_bar(progress):
+    """Hide the progress bar by removing it from the GUI."""
+    if progress:
+        progress.grid_remove()
+
 # Ensure required packages are available
 required_packages = ["punkt", "stopwords"]
 for package in required_packages:
@@ -236,7 +249,8 @@ def convert_pdf_to_txt(pdf_file, txt_file):
             txt.write(page.extract_text() + "\n")
 
 def convert_to_txt(input_file):
-    start_time = time.time()  # Start timing
+    global progress_conversion
+    start_time = time.time()
     base_name = os.path.basename(os.path.splitext(input_file)[0])
     output_file = os.path.join("Pending", f"{base_name}.txt")
     ext = os.path.splitext(input_file)[-1].lower()
@@ -281,79 +295,37 @@ def convert_to_txt(input_file):
             raise ValueError(f"Unsupported file type: {ext}")
     except Exception as e:
         print(f"Error converting file: {e}")
-    elapsed_time = time.time() - start_time  # Calculate elapsed time
+    elapsed_time = time.time() - start_time
     print(f"File conversion for '{input_file}' took {elapsed_time:.2f} seconds.")
-    """Convert various file types to plain text."""
-    base_name = os.path.basename(os.path.splitext(input_file)[0])
-    output_file = os.path.join("Pending", f"{base_name}.txt")
-    ext = os.path.splitext(input_file)[-1].lower()
-    try:
-        if ext == ".docx":
-            convert_docx_to_txt(input_file, output_file)
-        elif ext == ".pdf":
-            convert_pdf_to_txt(input_file, output_file)
-        elif ext == ".txt":
-            with open(input_file, "r", encoding="utf-8") as f_in, open(output_file, "w", encoding="utf-8") as f_out:
-                f_out.write(f_in.read())
-        elif ext == ".rtf":
-            convert_rtf_to_txt(input_file, output_file)
-        elif ext == ".odt":
-            convert_odt_to_txt(input_file, output_file)
-        elif ext == ".html":
-            convert_html_to_txt(input_file, output_file)
-        elif ext == ".doc":
-            convert_doc_to_txt(input_file, output_file)
-        elif ext == ".epub":
-            convert_epub_to_txt(input_file, output_file)
-        elif ext == ".mobi":
-            convert_mobi_to_txt(input_file, output_file)
-        elif ext == ".latex":
-            convert_latex_to_txt(input_file, output_file)
-        elif ext == ".xlsx":
-            convert_xlsx_to_txt(input_file, output_file)
-        elif ext == ".csv":
-            convert_csv_to_txt(input_file, output_file)
-        elif ext == ".ods":
-            convert_ods_to_txt(input_file, output_file)
-        elif ext == ".pptx":
-            convert_pptx_to_txt(input_file, output_file)
-        elif ext == ".odp":
-            convert_odp_to_txt(input_file, output_file)
-        elif ext == ".xml":
-            convert_xml_to_txt(input_file, output_file)
-        elif ext in [".md", ".markdown"]:
-            convert_markdown_to_txt(input_file, output_file)
-        else:
-            raise ValueError(f"Unsupported file type: {ext}")
-    except Exception as e:
-        print(f"Error converting file: {e}")
 
 # Global variables
 uploaded_files = []
 plagiarism_results = []
 
 def upload_files():
+    global uploaded_files
     filepaths = askopenfilenames(filetypes=[("All files", "*.*")])
     if not filepaths:
         return
 
-    global uploaded_files
+    # Show progress bar
+    progress_upload = show_progress_bar(window, row=2, column=0, width=400, height=10)
     uploaded_files = []
+    total_files = len(filepaths)
 
-    # Start timing for total conversion
-    start_time = time.time()
+    try:
+        for idx, filepath in enumerate(filepaths):
+            base_name = os.path.basename(filepath)
+            txt_path = os.path.join("Pending", f"{os.path.splitext(base_name)[0]}.txt")
+            convert_to_txt(filepath)  # Convert each file to text
+            uploaded_files.append(txt_path)
+            progress_upload.set((idx + 1) / total_files)  # Update progress
+            window.update_idletasks()  # Ensure GUI updates
 
-    for filepath in filepaths:
-        base_name = os.path.basename(filepath)
-        txt_path = os.path.join("Pending", f"{os.path.splitext(base_name)[0]}.txt")
-        convert_to_txt(filepath)  # Convert each file to text
-        uploaded_files.append(txt_path)
-
-    # Calculate total conversion time
-    total_conversion_time = time.time() - start_time
-    print(f"Total file conversion time: {total_conversion_time:.2f} seconds")
-
-    messagebox.showinfo("Upload Complete", "Files uploaded and converted successfully.")
+        messagebox.showinfo("Upload Complete", "Files uploaded and converted successfully.")
+    finally:
+        # Hide progress bar after completion
+        hide_progress_bar(progress_upload)
 
 def extract_copied_texts(file1, file2, min_similarity=0.7):
     """Extract copied texts between two files."""
@@ -392,6 +364,10 @@ def check_uploaded_files_plagiarism():
         messagebox.showwarning("No Files", "No files have been uploaded.")
         return
 
+    # Show progress bar
+    progress_check = show_progress_bar(window, row=4, column=0, width=400, height=10)
+    progress_check.set(0)
+
     try:
         corrupt_folder = os.path.join("Pending", "corrupt documents")
         os.makedirs(corrupt_folder, exist_ok=True)
@@ -399,9 +375,9 @@ def check_uploaded_files_plagiarism():
         corrupted_files = []
         file_contents = []
 
-        # Start timing for plagiarism check
-        start_time = time.time()
-
+        # Step 1: Load and validate files
+        total_steps = 4  # Embedding, clustering, comparison, logging
+        step = 1
         for file in uploaded_files:
             try:
                 with open(file, encoding='utf-8') as f:
@@ -419,52 +395,61 @@ def check_uploaded_files_plagiarism():
                 corrupt_file_path = os.path.join(corrupt_folder, file_name)
                 os.rename(file, corrupt_file_path)
                 corrupted_files.append(file_name)
-
         if not file_contents:
             messagebox.showerror("Empty Files", "All uploaded files are empty, corrupted, or contain no meaningful content.")
             return
+        progress_check.set(step / total_steps)  # Update progress
+        window.update_idletasks()
 
-        # Generate embeddings
+        # Step 2: Generate embeddings
         embeddings_start = time.time()
         embeddings = MODEL.encode(file_contents)
         embedding_time = time.time() - embeddings_start
+        step += 1
+        progress_check.set(step / total_steps)  # Update progress
+        window.update_idletasks()
 
-        # Cluster optimization
+        # Step 3: Cluster optimization
         cluster_start = time.time()
         optimal_clusters = optimal_cluster_count(embeddings)
         kmeans = MiniBatchKMeans(n_clusters=optimal_clusters, random_state=42, batch_size=100)
         clusters = kmeans.fit_predict(embeddings)
         clustering_time = time.time() - cluster_start
+        step += 1
+        progress_check.set(step / total_steps)  # Update progress
+        window.update_idletasks()
 
-        # Group documents by cluster
+        # Step 4: Group documents by cluster and compare
         cluster_groups = defaultdict(list)
         for idx, cluster_id in enumerate(clusters):
             cluster_groups[cluster_id].append((valid_files[idx], embeddings[idx]))
 
-        # Parallel comparison
         compare_start = time.time()
         results = Parallel(n_jobs=-1, prefer="threads")(
             delayed(cluster_comparison)(cluster) for cluster in cluster_groups.values()
         )
         comparison_time = time.time() - compare_start
-
         plagiarism_results = [item for sublist in results for item in sublist]
 
-        # Log total time
-        total_time = time.time() - start_time
+        step += 1
+        progress_check.set(step / total_steps)  # Update progress
+        window.update_idletasks()
+
+        total_time = time.time() - embeddings_start
         print(f"Plagiarism check completed. Embedding time: {embedding_time:.2f}s, Clustering time: {clustering_time:.2f}s, Comparison time: {comparison_time:.2f}s, Total time: {total_time:.2f}s")
 
         if corrupted_files:
             messagebox.showinfo(
                 "Plagiarism Check Complete",
-                f"Plagiarism check completed successfully.\n\n"
-                f"The following files were corrupted or empty and moved to 'corrupt documents':\n"
-                f"{', '.join(corrupted_files)}"
+                f"Plagiarism check completed successfully.\nThe following files were corrupted or empty and moved to 'corrupt documents':\n{', '.join(corrupted_files)}"
             )
         else:
             messagebox.showinfo("Plagiarism Check Complete", "Plagiarism check completed successfully.")
     except Exception as e:
         messagebox.showerror("Error", f"An error occurred during the plagiarism check: {e}")
+    finally:
+        # Hide progress bar after completion
+        hide_progress_bar(progress_check)
 
 def optimal_cluster_count(embeddings, max_clusters=5):
     """Determine the optimal number of clusters."""
