@@ -379,6 +379,7 @@ def check_uploaded_files_plagiarism():
                     content = f.read().strip()
                 if not content:
                     file_name = os.path.basename(file)
+<<<<<<< HEAD
                     target_path = os.path.join(corrupt_folder, file_name)
 
                     # Handle file conflicts by appending a timestamp
@@ -389,12 +390,25 @@ def check_uploaded_files_plagiarism():
                         target_path = os.path.join(corrupt_folder, file_name)
 
                     os.rename(file, target_path)
+=======
+                    corrupt_file_path = os.path.join(corrupt_folder, file_name)
+
+                    # Handle file conflicts by appending a timestamp
+                    while os.path.exists(corrupt_file_path):
+                        base_name, ext = os.path.splitext(file_name)
+                        timestamp = time.strftime("%Y%m%d%H%M%S")
+                        file_name = f"{base_name}_{timestamp}{ext}"
+                        corrupt_file_path = os.path.join(corrupt_folder, file_name)
+
+                    os.rename(file, corrupt_file_path)
+>>>>>>> deployment
                     corrupted_files.append(file_name)
                     continue
                 file_contents.append(content)
                 valid_files.append(file)
             except Exception as e:
                 file_name = os.path.basename(file)
+<<<<<<< HEAD
                 target_path = os.path.join(corrupt_folder, file_name)
 
                 # Handle file conflicts by appending a timestamp
@@ -405,6 +419,18 @@ def check_uploaded_files_plagiarism():
                     target_path = os.path.join(corrupt_folder, file_name)
 
                 os.rename(file, target_path)
+=======
+                corrupt_file_path = os.path.join(corrupt_folder, file_name)
+
+                # Handle file conflicts by appending a timestamp
+                while os.path.exists(corrupt_file_path):
+                    base_name, ext = os.path.splitext(file_name)
+                    timestamp = time.strftime("%Y%m%d%H%M%S")
+                    file_name = f"{base_name}_{timestamp}{ext}"
+                    corrupt_file_path = os.path.join(corrupt_folder, file_name)
+
+                os.rename(file, corrupt_file_path)
+>>>>>>> deployment
                 corrupted_files.append(file_name)
 
         if not file_contents:
