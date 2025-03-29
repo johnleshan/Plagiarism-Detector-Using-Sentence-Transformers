@@ -12,7 +12,7 @@ from tkinter import END, messagebox
 from tkinter.filedialog import askopenfilenames
 from docx import Document
 from PyPDF2 import PdfReader
-from fpdf import FPDF
+from fpdf import FPDF, XPos, YPos
 from difflib import SequenceMatcher
 from PIL import Image, ImageDraw, ImageFont, ImageTk
 from sklearn.cluster import MiniBatchKMeans
@@ -175,14 +175,17 @@ def convert_xlsx_to_txt(xlsx_file, txt_file):
 
 def convert_epub_to_txt(epub_file, txt_file):
     """Convert EPUB to plain text."""
-    book = epub.read_epub(epub_file)
-    text_content = ""
-    for item in book.get_items():
-        if item.get_type() == ebooklib.ITEM_DOCUMENT:
-            soup = BeautifulSoup(item.get_content(), "html.parser")
-            text_content += soup.get_text() + "\n"
-    with open(txt_file, "w", encoding="utf-8") as txt:
-        txt.write(text_content)
+    try:
+        book = epub.read_epub(epub_file)  # Read the EPUB file
+        text_content = ""
+        for item in book.get_items():  # Iterate through all items in the EPUB
+            if item.get_type() == epub.ITEM_DOCUMENT:  # Check if the item is a document
+                soup = BeautifulSoup(item.get_content(), "html.parser")  # Parse HTML content
+                text_content += soup.get_text() + "\n"  # Extract and append plain text
+        with open(txt_file, "w", encoding="utf-8") as txt:  # Save to .txt file
+            txt.write(text_content.strip())
+    except Exception as e:
+        print(f"Error converting EPUB file: {e}")
 
 def convert_mobi_to_txt(mobi_file, txt_file):
     """Convert MOBI to plain text using kindleunpack."""
@@ -555,6 +558,8 @@ def show_copied_texts():
 
     # Dynamically configure text widget appearance based on appearance mode
     current_mode = customtkinter.get_appearance_mode()
+    tooltip_text = "Switch to Light Mode" if current_mode == "Dark" else "Switch to Dark Mode"
+    Tooltip(btn_toggle_mode, tooltip_text)
     if current_mode == "Dark":
         text_widget.configure(fg="white", bg="black")  # Dark mode colors
     else:
@@ -600,11 +605,11 @@ def export_report():
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    pdf.cell(200, 10, txt="Plagiarism Report", ln=True, align='C')
+    pdf.set_font("Helvetica", size=12)
+    pdf.cell(200, 10, text="Plagiarism Report", new_x=XPos.LEFT, new_y=YPos.NEXT, align='C')
     pdf.ln(10)
     for result in simplified_results:
-        pdf.multi_cell(0, 10, txt=f"Source Document 1: {result['Source Document 1']}\n"
+        pdf.multi_cell(0, 10, text=f"Source Document 1: {result['Source Document 1']}\n"
                                  f"Source Document 2: {result['Source Document 2']}\n"
                                  f"Similarity Score: {result['Similarity Score']}\n"
                                  f"Plagiarism Status: {result['Plagiarism Status']}\n")
@@ -614,36 +619,56 @@ def export_report():
 
 def open_report():
     """Open the generated report."""
-    report_choice = messagebox.askquestion("Open Report", "Would you like to open the report in PDF format? Click 'Yes' for PDF and 'No' for CSV.")
-    if report_choice == 'yes':
-        os.system(f'start Reports/plagiarism_report.pdf')
-    else:
-        os.system(f'start Reports/plagiarism_report.csv')
+    # Create a custom dialog box with "PDF" and "CSV" buttons
+    choice = messagebox.askyesnocancel("Open Report", "Would you like to open the report in PDF format? Select 'PDF' or 'CSV'.")
+    
+    if choice is None:  # User clicked Cancel
+        return
+    
+    if choice:  # User selected PDF
+        pdf_path = os.path.join("Reports", "plagiarism_report.pdf")
+        if os.path.exists(pdf_path):
+            os.startfile(pdf_path)  # Open PDF
+        else:
+            messagebox.showerror("File Not Found", "The PDF report does not exist.")
+    else:  # User selected CSV
+        csv_path = os.path.join("Reports", "plagiarism_report.csv")
+        if os.path.exists(csv_path):
+            os.startfile(csv_path)  # Open CSV
+        else:
+            messagebox.showerror("File Not Found", "The CSV report does not exist.")
 
 def reset_application():
-    """Reset the application state."""
-    global uploaded_files, plagiarism_results
-    uploaded_files = []
-    plagiarism_results = []
-    for file in os.listdir("Pending"):
-        file_path = os.path.join("Pending", file)
-        if os.path.isfile(file_path):
-            os.remove(file_path)
-    for file in os.listdir("Screenshots"):
-        file_path = os.path.join("Screenshots", file)
-        if os.path.isfile(file_path):
-            os.remove(file_path)
-    messagebox.showinfo("Reset Complete", "Application has been reset to its initial state.")
+    """Reset the application state after user confirmation."""
+    confirm_reset = messagebox.askyesno("Confirm Reset", "Are you sure you want to reset the application? This will clear all uploaded files and results.")
+    if confirm_reset:
+        global uploaded_files, plagiarism_results
+        uploaded_files = []
+        plagiarism_results = []
+        # Remove files from "Pending" folder
+        for file in os.listdir("Pending"):
+            file_path = os.path.join("Pending", file)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+        # Remove files from "Screenshots" folder
+        for file in os.listdir("Screenshots"):
+            file_path = os.path.join("Screenshots", file)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+        messagebox.showinfo("Reset Complete", "Application has been reset to its initial state.")
 
 def toggle_appearance_mode():
     """Toggle light/dark mode."""
+    global btn_toggle_mode
     current_mode = customtkinter.get_appearance_mode()
-    if current_mode == "Dark":
-        customtkinter.set_appearance_mode("Light")
-        btn_toggle_mode.configure(image=moon_icon)
-    else:
-        customtkinter.set_appearance_mode("Dark")
-        btn_toggle_mode.configure(image=sun_icon)
+    new_mode = "Light" if current_mode == "Dark" else "Dark"
+    customtkinter.set_appearance_mode(new_mode)
+
+    # Update the tooltip text
+    tooltip_text = "Switch to Light Mode" if new_mode == "Dark" else "Switch to Dark Mode"
+    Tooltip(btn_toggle_mode, tooltip_text).hide_tooltip()  # Reapply tooltip
+
+    # Update widget colors
     update_widget_colors()
 
 def update_widget_colors():
@@ -668,13 +693,64 @@ def update_widget_colors():
         btn_reset.configure(fg_color="#FF0000", hover_color="#CC0000")
         btn_toggle_mode.configure(fg_color="#2E2E2E", hover_color="#2E2E2E", text_color="#FFFFFF")
 
+class Tooltip:
+    """Create a modern, styled tooltip for a given widget."""
+    def __init__(self, widget, text):
+        self.widget = widget
+        self.text = text
+        self.tooltip_window = None
+        self.widget.bind("<Enter>", self.show_tooltip)
+        self.widget.bind("<Leave>", self.hide_tooltip)
+
+    def show_tooltip(self, event=None):
+        """Display the tooltip."""
+        if self.tooltip_window or not self.text:
+            return
+
+        # Determine position
+        x, y, _, _ = self.widget.bbox("insert")
+        if x is None or y is None:
+            x, y = self.widget.winfo_pointerxy()
+        x += self.widget.winfo_rootx() + 25
+        y += self.widget.winfo_rooty() + 25
+
+        # Create the tooltip window
+        self.tooltip_window = tk.Toplevel(self.widget)
+        self.tooltip_window.wm_overrideredirect(True)  # Remove window decorations
+        self.tooltip_window.wm_geometry(f"+{x}+{y}")
+
+        # Get current appearance mode
+        current_mode = customtkinter.get_appearance_mode()
+
+        # Set background and foreground colors based on mode
+        bg_color = "#F5F5F5" if current_mode == "Light" else "#2E2E2E"
+        fg_color = "#333333" if current_mode == "Light" else "#FFFFFF"
+
+        # Add a label to the tooltip window
+        label = customtkinter.CTkLabel(
+            self.tooltip_window,
+            text=self.text,
+            bg_color=bg_color,
+            text_color=fg_color,
+            font=("Arial", 10),
+            corner_radius=8,
+            padx=10,
+            pady=5
+        )
+        label.pack()
+
+    def hide_tooltip(self, event=None):
+        """Hide the tooltip."""
+        if self.tooltip_window:
+            self.tooltip_window.destroy()
+            self.tooltip_window = None
+
 # GUI implementation
 window = customtkinter.CTk()
 customtkinter.set_appearance_mode("dark")
-window.title("Internal Plagiarism Detector")
+window.title("Plagiarism Checker System")
 window.state("zoomed")
 
-# Load icons
 # Load icons
 if os.path.exists("sun.png"):
     sun_icon = customtkinter.CTkImage(light_image=Image.open("sun.png"), size=(32, 32))
@@ -688,32 +764,54 @@ else:
 
 # GUI components
 welcome_frm = customtkinter.CTkFrame(window)
-welcome_msg_variable = tk.StringVar(welcome_frm, "Welcome to the state of the art Internal Plagiarism Detector")
+welcome_msg_variable = tk.StringVar(welcome_frm, "Welcome to the state of the art Plagiarism Checker System")
 welcome_lbl = customtkinter.CTkLabel(welcome_frm, textvariable=welcome_msg_variable,
                                      height=100, corner_radius=20, 
                                      text_color="yellow", font=("Comic Sans MS bold", 30))
 welcome_lbl.grid(row=0, column=0, padx=200, pady=(20, 0), sticky="nsew")
 
 button_frm = customtkinter.CTkFrame(window)
+
+# UPLOAD FILES Button
 btn_upload = customtkinter.CTkButton(button_frm, corner_radius=30, hover_color="Green", text="UPLOAD FILES", command=upload_files)
 btn_upload.grid(row=0, column=0, padx=(180, 10), pady=10)
+Tooltip(btn_upload, "Upload files to check for plagiarism.")
+
+# CHECK PLAGIARISM Button
 btn_check = customtkinter.CTkButton(button_frm, corner_radius=30, hover_color="Green", text="CHECK PLAGIARISM", command=check_uploaded_files_plagiarism)
 btn_check.grid(row=0, column=1, padx=10, pady=10)
+Tooltip(btn_check, "Check uploaded files for plagiarism.")
+
+# EXPORT REPORT Button
 btn_report = customtkinter.CTkButton(button_frm, corner_radius=30, hover_color="Green", text="EXPORT REPORT", command=export_report)
 btn_report.grid(row=0, column=2, padx=10, pady=10)
+Tooltip(btn_report, "Export plagiarism results to CSV and PDF formats.")
+
+# OPEN REPORT Button
 btn_open_report = customtkinter.CTkButton(button_frm, corner_radius=30, hover_color="Green", text="OPEN REPORT", command=open_report)
 btn_open_report.grid(row=0, column=3, padx=10, pady=10)
+Tooltip(btn_open_report, "Open the generated plagiarism report in PDF or CSV format.")
+
+# RESET Button
 btn_reset = customtkinter.CTkButton(button_frm, corner_radius=30, hover_color="Red", text="RESET", command=reset_application)
 btn_reset.grid(row=0, column=4, padx=10, pady=10)
+Tooltip(btn_reset, "Reset the application and clear all uploaded files and results.")
+
+# SHOW COPIED TEXTS Button
 btn_show_copied_texts = customtkinter.CTkButton(button_frm, corner_radius=30, hover_color="Green", text="SHOW COPIED TEXTS", command=show_copied_texts)
 btn_show_copied_texts.grid(row=0, column=5, padx=10, pady=10)
+Tooltip(btn_show_copied_texts, "Show detailed copied texts between flagged documents.")
 
+button_frm.grid(row=1, column=0, padx=20, pady=(10, 50), sticky="nsew")
+
+# Toggle Appearance Mode Button
 top_right_frame = customtkinter.CTkFrame(window)
 top_right_frame.grid(row=0, column=1, padx=20, pady=20, sticky="ne")
 btn_toggle_mode = customtkinter.CTkButton(top_right_frame, text="", image=sun_icon if sun_icon else None, 
                                           command=toggle_appearance_mode, fg_color="#2E2E2E", hover_color="#2E2E2E", 
                                           width=40, height=40)
 btn_toggle_mode.grid(row=0, column=0)
+Tooltip(btn_toggle_mode, "Toggle light/dark mode.")
 
 welcome_frm.grid(row=0, column=0, padx=20, pady=(50, 10), sticky="nsew")
 button_frm.grid(row=1, column=0, padx=20, pady=(10, 50), sticky="nsew")
