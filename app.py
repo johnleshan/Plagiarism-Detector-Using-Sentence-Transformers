@@ -690,8 +690,16 @@ window.title("Internal Plagiarism Detector")
 window.state("zoomed")
 
 # Load icons
-sun_icon = ImageTk.PhotoImage(Image.open("sun.png").resize((32, 32))) if os.path.exists("sun.png") else None
-moon_icon = ImageTk.PhotoImage(Image.open("moon.png").resize((32, 32))) if os.path.exists("moon.png") else None
+# Load icons
+if os.path.exists("sun.png"):
+    sun_icon = customtkinter.CTkImage(light_image=Image.open("sun.png"), size=(32, 32))
+else:
+    sun_icon = None
+
+if os.path.exists("moon.png"):
+    moon_icon = customtkinter.CTkImage(dark_image=Image.open("moon.png"), size=(32, 32))
+else:
+    moon_icon = None
 
 # GUI components
 welcome_frm = customtkinter.CTkFrame(window)
