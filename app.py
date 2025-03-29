@@ -1,16 +1,9 @@
 import os
 import warnings
-# Suppress TensorFlow deprecation warnings
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Suppress INFO and WARNING messages
-warnings.filterwarnings('ignore', category=DeprecationWarning)
-warnings.filterwarnings('ignore', module='tensorflow')
 import time
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-# Ensure NLTK resources are downloaded
-nltk.download('punkt')
-nltk.download('stopwords')
 import csv
 import numpy as np
 import customtkinter
@@ -42,10 +35,30 @@ import subprocess
 import xml.etree.ElementTree as ET
 import re
 
-# Suppress warnings
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
-warnings.filterwarnings('ignore')
+# Define the path to the local NLTK data directory within the project
+nltk_data_dir = os.path.join(os.getcwd(), "nltk_data")
+
+# Add the local directory to NLTK's search path
+nltk.data.path.append(nltk_data_dir)
+
+# Function to check if a package is already available
+def is_package_available(package_name):
+    try:
+        if package_name == "punkt":
+            nltk.data.find("tokenizers/punkt")
+        elif package_name == "stopwords":
+            nltk.data.find("corpora/stopwords")
+        return True
+    except LookupError:
+        return False
+
+# Ensure required packages are available
+required_packages = ["punkt", "stopwords"]
+for package in required_packages:
+    if not is_package_available(package):
+        print(f"NLTK package '{package}' is missing from the local directory.")
+    else:
+        print(f"NLTK package '{package}' is already available.")
 
 # Initialize Sentence Transformer model
 MODEL = SentenceTransformer('all-MiniLM-L6-v2')
@@ -673,7 +686,7 @@ def update_widget_colors():
 # GUI implementation
 window = customtkinter.CTk()
 customtkinter.set_appearance_mode("dark")
-window.title("Plagiarism Checker System")
+window.title("Internal Plagiarism Detector")
 window.state("zoomed")
 
 # Load icons
@@ -682,7 +695,7 @@ moon_icon = ImageTk.PhotoImage(Image.open("moon.png").resize((32, 32))) if os.pa
 
 # GUI components
 welcome_frm = customtkinter.CTkFrame(window)
-welcome_msg_variable = tk.StringVar(welcome_frm, "Welcome to the state of the art Plagiarism Checker System")
+welcome_msg_variable = tk.StringVar(welcome_frm, "Welcome to the state of the art Internal Plagiarism Detector")
 welcome_lbl = customtkinter.CTkLabel(welcome_frm, textvariable=welcome_msg_variable,
                                      height=100, corner_radius=20, 
                                      text_color="yellow", font=("Comic Sans MS bold", 30))
