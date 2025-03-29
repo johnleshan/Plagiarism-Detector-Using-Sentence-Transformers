@@ -501,7 +501,7 @@ def cluster_comparison(cluster_docs):
             if sim_matrix[i, j] >= 0.7:
                 pair = sorted([os.path.basename(filenames[i]), os.path.basename(filenames[j])])
                 # Convert similarity score to percentage
-                similarity_percentage = int(sim_matrix[i, j] * 100)
+                similarity_percentage = int(sim_matrix[i, j] * 100)  # Convert to integer percentage
                 results.append({
                     "Assignment 1": pair[0],
                     "Assignment 2": pair[1],
@@ -549,7 +549,6 @@ def show_copied_texts():
             source_doc = result["Assignment 1"]
             copied_doc = result["Assignment 2"]
             sim_score = result["Similarity Score"]  # Already formatted as percentage
-            # Display flagged pair information
             text_widget.insert("end", "{:<10} {:<30} {:<30} {}\n".format(
                 id_counter, source_doc, copied_doc, sim_score
             ))
@@ -571,6 +570,7 @@ def show_copied_texts():
                     text_widget.insert("end", ", ".join(keywords) + "\n")
                 else:
                     text_widget.insert("end", "(No keywords could be extracted.)\n")
+
             text_widget.insert("end", "-" * 100 + "\n")
             id_counter += 1
 
