@@ -306,29 +306,25 @@ uploaded_files = []
 plagiarism_results = []
 
 def upload_files():
-    global uploaded_files
     filepaths = askopenfilenames(filetypes=[("All files", "*.*")])
     if not filepaths:
         return
 
-    # Show progress bar
-    progress_upload = show_progress_bar(window, row=2, column=0, width=400, height=10)
+    global uploaded_files
     uploaded_files = []
-    total_files = len(filepaths)
+    # Start timing for total conversion
+    start_time = time.time()
 
-    try:
-        for idx, filepath in enumerate(filepaths):
-            base_name = os.path.basename(filepath)
-            txt_path = os.path.join("Pending", f"{os.path.splitext(base_name)[0]}.txt")
-            convert_to_txt(filepath)  # Convert each file to text
-            uploaded_files.append(txt_path)
-            progress_upload.set((idx + 1) / total_files)  # Update progress
-            window.update_idletasks()  # Ensure GUI updates
+    for filepath in filepaths:
+        base_name = os.path.basename(filepath)
+        txt_path = os.path.join("Pending", f"{os.path.splitext(base_name)[0]}.txt")
+        convert_to_txt(filepath)  # Convert each file to text
+        uploaded_files.append(txt_path)
 
-        messagebox.showinfo("Upload Complete", "Files uploaded and converted successfully.")
-    finally:
-        # Hide progress bar after completion
-        hide_progress_bar(progress_upload)
+    # Calculate total conversion time
+    total_conversion_time = time.time() - start_time
+    print(f"Total file conversion time: {total_conversion_time:.2f} seconds")
+    messagebox.showinfo("Upload Complete", "Files uploaded and converted successfully.")
 
 def extract_copied_texts(file1, file2, min_similarity=0.7):
     """Extract copied texts between two files."""
@@ -367,10 +363,6 @@ def check_uploaded_files_plagiarism():
         messagebox.showwarning("No Files", "No files have been uploaded.")
         return
 
-    # Show progress bar
-    progress_check = show_progress_bar(window, row=4, column=0, width=400, height=10)
-    progress_check.set(0)
-
     try:
         corrupt_folder = os.path.join("Pending", "corrupt documents")
         os.makedirs(corrupt_folder, exist_ok=True)
@@ -378,55 +370,65 @@ def check_uploaded_files_plagiarism():
         corrupted_files = []
         file_contents = []
 
-        # Step 1: Load and validate files
-        total_steps = 4  # Embedding, clustering, comparison, logging
-        step = 1
+        # Start timing for plagiarism check
+        start_time = time.time()
+
         for file in uploaded_files:
             try:
                 with open(file, encoding='utf-8') as f:
                     content = f.read().strip()
                 if not content:
                     file_name = os.path.basename(file)
-                    corrupt_file_path = os.path.join(corrupt_folder, file_name)
-                    os.rename(file, corrupt_file_path)
+                    target_path = os.path.join(corrupt_folder, file_name)
+
+                    # Handle file conflicts by appending a timestamp
+                    while os.path.exists(target_path):
+                        base_name, ext = os.path.splitext(file_name)
+                        timestamp = time.strftime("%Y%m%d%H%M%S")
+                        file_name = f"{base_name}_{timestamp}{ext}"
+                        target_path = os.path.join(corrupt_folder, file_name)
+
+                    os.rename(file, target_path)
                     corrupted_files.append(file_name)
                     continue
                 file_contents.append(content)
                 valid_files.append(file)
             except Exception as e:
                 file_name = os.path.basename(file)
-                corrupt_file_path = os.path.join(corrupt_folder, file_name)
-                os.rename(file, corrupt_file_path)
+                target_path = os.path.join(corrupt_folder, file_name)
+
+                # Handle file conflicts by appending a timestamp
+                while os.path.exists(target_path):
+                    base_name, ext = os.path.splitext(file_name)
+                    timestamp = time.strftime("%Y%m%d%H%M%S")
+                    file_name = f"{base_name}_{timestamp}{ext}"
+                    target_path = os.path.join(corrupt_folder, file_name)
+
+                os.rename(file, target_path)
                 corrupted_files.append(file_name)
+
         if not file_contents:
             messagebox.showerror("Empty Files", "All uploaded files are empty, corrupted, or contain no meaningful content.")
             return
-        progress_check.set(step / total_steps)  # Update progress
-        window.update_idletasks()
 
-        # Step 2: Generate embeddings
+        # Generate embeddings
         embeddings_start = time.time()
         embeddings = MODEL.encode(file_contents)
         embedding_time = time.time() - embeddings_start
-        step += 1
-        progress_check.set(step / total_steps)  # Update progress
-        window.update_idletasks()
 
-        # Step 3: Cluster optimization
+        # Cluster optimization
         cluster_start = time.time()
         optimal_clusters = optimal_cluster_count(embeddings)
         kmeans = MiniBatchKMeans(n_clusters=optimal_clusters, random_state=42, batch_size=100)
         clusters = kmeans.fit_predict(embeddings)
         clustering_time = time.time() - cluster_start
-        step += 1
-        progress_check.set(step / total_steps)  # Update progress
-        window.update_idletasks()
 
-        # Step 4: Group documents by cluster and compare
+        # Group documents by cluster
         cluster_groups = defaultdict(list)
         for idx, cluster_id in enumerate(clusters):
             cluster_groups[cluster_id].append((valid_files[idx], embeddings[idx]))
 
+        # Parallel comparison
         compare_start = time.time()
         results = Parallel(n_jobs=-1, prefer="threads")(
             delayed(cluster_comparison)(cluster) for cluster in cluster_groups.values()
@@ -434,11 +436,8 @@ def check_uploaded_files_plagiarism():
         comparison_time = time.time() - compare_start
         plagiarism_results = [item for sublist in results for item in sublist]
 
-        step += 1
-        progress_check.set(step / total_steps)  # Update progress
-        window.update_idletasks()
-
-        total_time = time.time() - embeddings_start
+        # Log total time
+        total_time = time.time() - start_time
         print(f"Plagiarism check completed. Embedding time: {embedding_time:.2f}s, Clustering time: {clustering_time:.2f}s, Comparison time: {comparison_time:.2f}s, Total time: {total_time:.2f}s")
 
         if corrupted_files:
@@ -448,11 +447,9 @@ def check_uploaded_files_plagiarism():
             )
         else:
             messagebox.showinfo("Plagiarism Check Complete", "Plagiarism check completed successfully.")
+
     except Exception as e:
         messagebox.showerror("Error", f"An error occurred during the plagiarism check: {e}")
-    finally:
-        # Hide progress bar after completion
-        hide_progress_bar(progress_check)
 
 def optimal_cluster_count(embeddings, max_clusters=5):
     """Determine the optimal number of clusters."""
@@ -477,10 +474,12 @@ def cluster_comparison(cluster_docs):
         for j in range(i + 1, sim_matrix.shape[1]):
             if sim_matrix[i, j] >= 0.7:
                 pair = sorted([os.path.basename(filenames[i]), os.path.basename(filenames[j])])
+                # Convert similarity score to percentage
+                similarity_percentage = int(sim_matrix[i, j] * 100)
                 results.append({
                     "Assignment 1": pair[0],
                     "Assignment 2": pair[1],
-                    "Similarity Score": f"{sim_matrix[i, j]:.2f}",
+                    "Similarity Score": f"{similarity_percentage}%",  # Format as percentage
                     "Plagiarism Status": "Flagged"
                 })
     return results
@@ -497,21 +496,17 @@ def show_copied_texts():
     if not plagiarism_results:
         messagebox.showerror("No Results", "No plagiarism results to display.")
         return
-
     result_window = customtkinter.CTkToplevel()
     result_window.title("Plagiarism Results - Command Line Format")
     result_window.geometry("1200x800")
     result_window.state("zoomed")
-
     main_frame = customtkinter.CTkFrame(result_window)
     main_frame.pack(fill="both", expand=True, padx=10, pady=10)
-
     text_widget = tk.Text(main_frame, wrap="word", font=("Consolas", 12))
     scrollbar = customtkinter.CTkScrollbar(main_frame, command=text_widget.yview)
     text_widget.configure(yscrollcommand=scrollbar.set)
     text_widget.grid(row=0, column=0, sticky="nsew")
     scrollbar.grid(row=0, column=1, sticky="ns")
-
     main_frame.grid_rowconfigure(0, weight=1)
     main_frame.grid_columnconfigure(0, weight=1)
 
@@ -521,19 +516,17 @@ def show_copied_texts():
         "ID", "Source Document", "Copied Document", "Similarity Score"
     ))
     text_widget.insert("end", "-" * 100 + "\n")
-
     id_counter = 1
+
     for result in plagiarism_results:
         if result["Plagiarism Status"] == "Flagged":
             source_doc = result["Assignment 1"]
             copied_doc = result["Assignment 2"]
-            sim_score = float(result["Similarity Score"])
-
+            sim_score = result["Similarity Score"]  # Already formatted as percentage
             # Display flagged pair information
-            text_widget.insert("end", "{:<10} {:<30} {:<30} {:.2f}\n".format(
+            text_widget.insert("end", "{:<10} {:<30} {:<30} {}\n".format(
                 id_counter, source_doc, copied_doc, sim_score
             ))
-
             file1 = os.path.join("Pending", source_doc)
             file2 = os.path.join("Pending", copied_doc)
             copied_texts = extract_copied_texts(file1, file2)
@@ -552,19 +545,15 @@ def show_copied_texts():
                     text_widget.insert("end", ", ".join(keywords) + "\n")
                 else:
                     text_widget.insert("end", "(No keywords could be extracted.)\n")
-
-            text_widget.insert("end", "-" * 100 + "\n\n")
+            text_widget.insert("end", "-" * 100 + "\n")
             id_counter += 1
 
     # Dynamically configure text widget appearance based on appearance mode
     current_mode = customtkinter.get_appearance_mode()
-    tooltip_text = "Switch to Light Mode" if current_mode == "Dark" else "Switch to Dark Mode"
-    Tooltip(btn_toggle_mode, tooltip_text)
     if current_mode == "Dark":
         text_widget.configure(fg="white", bg="black")  # Dark mode colors
     else:
         text_widget.configure(fg="black", bg="white")  # Light mode colors
-
     text_widget.configure(state="disabled")  # Make the text widget read-only
 
     # Close button
@@ -582,40 +571,53 @@ def export_report():
     if not plagiarism_results:
         messagebox.showerror("No Results", "No plagiarism results to export.")
         return
+
     flagged_results = [result for result in plagiarism_results if result["Plagiarism Status"] == "Flagged"]
     if not flagged_results:
         messagebox.showinfo("No Flagged Documents", "No flagged documents to export.")
         return
+
     simplified_results = [
         {
             "Source Document 1": result["Assignment 1"],
             "Source Document 2": result["Assignment 2"],
-            "Similarity Score": result["Similarity Score"],
+            "Similarity Score": result["Similarity Score"],  # Already formatted as percentage
             "Plagiarism Status": result["Plagiarism Status"]
         }
         for result in flagged_results
     ]
+
     csv_filename = os.path.join("Reports", "plagiarism_report.csv")
     keys = simplified_results[0].keys()
     with open(csv_filename, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, fieldnames=keys)
         writer.writeheader()
         writer.writerows(simplified_results)
+
     pdf_filename = os.path.join("Reports", "plagiarism_report.pdf")
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
     pdf.set_font("Helvetica", size=12)
-    pdf.cell(200, 10, text="Plagiarism Report", new_x=XPos.LEFT, new_y=YPos.NEXT, align='C')
+    pdf.cell(200, 10, text="Plagiarism Report", ln=True, align='C')
     pdf.ln(10)
+
     for result in simplified_results:
-        pdf.multi_cell(0, 10, text=f"Source Document 1: {result['Source Document 1']}\n"
-                                 f"Source Document 2: {result['Source Document 2']}\n"
-                                 f"Similarity Score: {result['Similarity Score']}\n"
-                                 f"Plagiarism Status: {result['Plagiarism Status']}\n")
+        pdf.multi_cell(
+            0, 10, text=f"Source Document 1: {result['Source Document 1']}\n"
+                        f"Source Document 2: {result['Source Document 2']}\n"
+                        f"Similarity Score: {result['Similarity Score']}\n"  # Already formatted as percentage
+                        f"Plagiarism Status: {result['Plagiarism Status']}\n"
+        )
         pdf.ln(5)
+
     pdf.output(pdf_filename)
-    messagebox.showinfo("Report Generated", f"Report saved successfully in Reports folder.\nCSV: {csv_filename}\nPDF: {pdf_filename}")
+    messagebox.showinfo(
+        "Report Generated",
+        f"Report saved successfully in Reports folder.\n"
+        f"CSV: {csv_filename}\n"
+        f"PDF: {pdf_filename}"
+    )
 
 def open_report():
     """Open the generated report."""
