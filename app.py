@@ -306,25 +306,28 @@ uploaded_files = []
 plagiarism_results = []
 
 def upload_files():
+    global uploaded_files
     filepaths = askopenfilenames(filetypes=[("All files", "*.*")])
     if not filepaths:
         return
 
-    global uploaded_files
+    # Show progress bar
+    progress_upload = show_progress_bar(window, row=2, column=0, width=400, height=10)
     uploaded_files = []
-    # Start timing for total conversion
-    start_time = time.time()
+    total_files = len(filepaths)
 
-    for filepath in filepaths:
-        base_name = os.path.basename(filepath)
-        txt_path = os.path.join("Pending", f"{os.path.splitext(base_name)[0]}.txt")
-        convert_to_txt(filepath)  # Convert each file to text
-        uploaded_files.append(txt_path)
-
-    # Calculate total conversion time
-    total_conversion_time = time.time() - start_time
-    print(f"Total file conversion time: {total_conversion_time:.2f} seconds")
-    messagebox.showinfo("Upload Complete", "Files uploaded and converted successfully.")
+    try:
+        for idx, filepath in enumerate(filepaths):
+            base_name = os.path.basename(filepath)
+            txt_path = os.path.join("Pending", f"{os.path.splitext(base_name)[0]}.txt")
+            convert_to_txt(filepath)  # Convert each file to text
+            uploaded_files.append(txt_path)
+            progress_upload.set((idx + 1) / total_files)  # Update progress
+            window.update_idletasks()  # Ensure GUI updates
+        messagebox.showinfo("Upload Complete", "Files uploaded and converted successfully.")
+    finally:
+        # Hide progress bar after completion
+        hide_progress_bar(progress_upload)
 
 def extract_copied_texts(file1, file2, min_similarity=0.7):
     """Extract copied texts between two files."""
