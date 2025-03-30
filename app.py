@@ -1,5 +1,4 @@
 import os
-import warnings
 import time
 import nltk
 from nltk.corpus import stopwords
@@ -34,6 +33,21 @@ from pptx import Presentation
 import subprocess
 import xml.etree.ElementTree as ET
 import re
+import sys
+
+# Gets the correct file path whether running as .py or .exe
+def get_resource_path(relative_path):
+    if getattr(sys, 'frozen', False):  # Running as .exe
+        base_path = sys._MEIPASS
+    else:  # Running as .py script
+        base_path = os.path.dirname(__file__)
+    
+    return os.path.join(base_path, relative_path)
+
+# Correct file paths for icons and folder
+sun_icon = get_resource_path("sun.png")
+moon_icon = get_resource_path("moon.png")
+nltk_data_path = get_resource_path("nltk_data")
 
 # Define the path to the local NLTK data directory within the project
 nltk_data_dir = os.path.join(os.getcwd(), "nltk_data")
