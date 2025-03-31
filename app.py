@@ -91,7 +91,7 @@ for package in required_packages:
 MODEL = SentenceTransformer('all-MiniLM-L6-v2')
 
 # Create necessary folders
-for folder in ["Pending", "Reports", "Screenshots"]:
+for folder in ["Pending", "Reports"]:
     os.makedirs(folder, exist_ok=True)
 
 # File conversion functions
@@ -531,7 +531,7 @@ def show_copied_texts():
         return
 
     result_window = customtkinter.CTkToplevel()
-    result_window.title("Plagiarism Results - Command Line Format")
+    result_window.title("Plagiarism Results Window")
     result_window.geometry("1200x800")
     result_window.state("zoomed")
 
@@ -776,7 +776,7 @@ class Tooltip:
 # GUI implementation
 window = customtkinter.CTk()
 customtkinter.set_appearance_mode("dark")
-window.title("Plagiarism Checker System")
+window.title("Internal Plagiarism Detector")
 window.state("zoomed")
 
 # Load icons
@@ -792,7 +792,7 @@ else:
 
 # GUI components
 welcome_frm = customtkinter.CTkFrame(window)
-welcome_msg_variable = tk.StringVar(welcome_frm, "Welcome to the state of the art Plagiarism Checker System")
+welcome_msg_variable = tk.StringVar(welcome_frm, "Welcome to the state-of-the-art Internal Plagiarism Detector")
 welcome_lbl = customtkinter.CTkLabel(welcome_frm, textvariable=welcome_msg_variable,
                                      height=100, corner_radius=20, 
                                      text_color="yellow", font=("Comic Sans MS bold", 30))
