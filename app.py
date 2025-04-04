@@ -11,7 +11,7 @@ from tkinter import END, messagebox
 from tkinter.filedialog import askopenfilenames
 from docx import Document
 from PyPDF2 import PdfReader
-from fpdf import FPDF, XPos, YPos
+from fpdf import FPDF
 from difflib import SequenceMatcher
 from PIL import Image, ImageDraw, ImageFont, ImageTk
 from sklearn.cluster import MiniBatchKMeans
@@ -266,7 +266,7 @@ def convert_pdf_to_txt(pdf_file, txt_file):
             txt.write(page.extract_text() + "\n")
 
 def convert_to_txt(input_file):
-    global progress_conversion
+    # Removed unused variable 'progress_conversion'
     start_time = time.time()
     base_name = os.path.basename(os.path.splitext(input_file)[0])
     output_file = os.path.join("Pending", f"{base_name}.txt")
@@ -634,7 +634,7 @@ def export_report():
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
     pdf.set_font("Helvetica", size=12)
-    pdf.cell(200, 10, text="Plagiarism Report", new_x=XPos.LEFT, new_y=YPos.NEXT, align='C')
+    pdf.cell(200, 10, txt="Plagiarism Report", ln=1, align='C')
     pdf.ln(10)
     for result in simplified_results:
         pdf.multi_cell(0, 10, text=f"Source Document 1: {result['Source Document 1']}\n"
