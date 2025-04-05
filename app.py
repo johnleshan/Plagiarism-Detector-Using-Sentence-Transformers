@@ -637,7 +637,7 @@ def export_report():
     pdf.cell(200, 10, txt="Plagiarism Report", ln=1, align='C')
     pdf.ln(10)
     for result in simplified_results:
-        pdf.multi_cell(0, 10, text=f"Source Document 1: {result['Source Document 1']}\n"
+        pdf.multi_cell(0, 10, txt=f"Source Document 1: {result['Source Document 1']}\n"
                                  f"Source Document 2: {result['Source Document 2']}\n"
                                  f"Similarity Score: {result['Similarity Score']}\n"
                                  f"Plagiarism Status: {result['Plagiarism Status']}\n")
@@ -673,17 +673,15 @@ def reset_application():
         global uploaded_files, plagiarism_results
         uploaded_files = []
         plagiarism_results = []
+
         # Remove files from "Pending" folder
         for file in os.listdir("Pending"):
             file_path = os.path.join("Pending", file)
             if os.path.isfile(file_path):
                 os.remove(file_path)
-        # Remove files from "Screenshots" folder
-        for file in os.listdir("Screenshots"):
-            file_path = os.path.join("Screenshots", file)
-            if os.path.isfile(file_path):
-                os.remove(file_path)
-        messagebox.showinfo("Reset Complete", "Application has been reset to its initial state.")
+
+        # Confirmation message after reset
+        messagebox.showinfo("Reset Complete", "Application data has been reset successfully.")
 
 def toggle_appearance_mode():
     """Toggle light/dark mode."""
