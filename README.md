@@ -21,12 +21,14 @@
 
 Detect semantic plagiarism using AI-powered sentence embeddings. This tool compares text against a reference corpus to identify paraphrased content, even when wording differs—ideal for educators, content creators, and researchers.
 
+
 ## Features
 
 - ✅ Detects paraphrased content (not just copy-paste)
 - ⚡ Processes texts in seconds
 - 🌐 Supports 100+ languages via Sentence Transformers
 - 📊 Outputs quantitative similarity scores
+
 
 ## Installation
 
@@ -46,32 +48,32 @@ Step 1: Upload Files
 Click the "UPLOAD FILES" button to select and upload the documents you want to check for plagiarism.
 
 <p align="center">
-<img src="assets/Upload files.png" alt="Upload Files" width="700">
+<img src="Assets/Upload files.png" alt="Upload Files" width="700">
 </p>
 
 Step 2: Check Plagiarism
 After uploading your files, click "CHECK PLAGIARISM" to begin the analysis. The app will compare your documents against its reference corpus.
 
 <p align="center">
-<img src="assets/Check plagiarism.png" alt="Check Plagiarism" width="700">
+<img src="Assets/Check plagiarism.png" alt="Check Plagiarism" width="700">
 </p>
 
 Step 3: View Results
 Once the analysis is complete, click "SHOW COPIED TEXTS" to see detailed results including similarity scores and specific text matches.
 
 <p align="center">
-<img src="assets/Show copied text.png" alt="Show Results" width="700">
+<img src="Assets/Show copied text.png" alt="Show Results" width="700">
 </p>
 
 Step 4: Export Report
 Generate a comprehensive report of the plagiarism analysis by clicking "EXPORT REPORT". You can choose between PDF and CSV formats.
 
 <p align="center">
-<img src="assets/Export report.png" alt="Export Report" width="700">
+<img src="Assets/Export report.png" alt="Export Report" width="700">
 </p>
 
 
 ## How it works
 <p align="center">
-<img src="diagram.svg" alt="Workflow Diagram">
+<img src="Assets/diagram.svg" alt="Workflow Diagram">
 </p>
