@@ -42,8 +42,8 @@ Detect semantic plagiarism using AI-powered sentence embeddings. This tool compa
 <p align="center">
   How it works
   <br>
-  graph LR
+</p>
+graph LR
     A[Input Text Files] --> B[Generate Sentence Embeddings]
     B --> C[Calculate Cosine Similarity]
     C --> D[Output Similarity Score]
-</p>
