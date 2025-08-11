@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Assets/logo.png" alt="Plagiaris Detector Logo" width="150">
+  <img src="Assets/logo.png" alt="Plagiaris Detector Logo" width="250">
 </p>
 
 <h1 align="center">Plagiarism Detector Using Sentence Transformers</h1>
