@@ -39,12 +39,41 @@ Detect semantic plagiarism using AI-powered sentence embeddings. This tool compa
    pip install -r requirements.txt
 
 
-<p align="center">
-  How it works
-  <br>
-</p>
-```mermaid
-graph LR
-    A[Input Text Files] --> B[Generate Sentence Embeddings]
-    B --> C[Calculate Cosine Similarity]
-    C --> D[Output Similarity Score]
+## How it works
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300">
+  <style>
+    .box { fill: #4A90E2; stroke: #2E5C8A; stroke-width: 2; rx: 10; }
+    .text { fill: white; font-family: Arial, sans-serif; font-size: 16px; text-anchor: middle; }
+    .arrow { stroke: #333; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+  </style>
+  
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+    </marker>
+  </defs>
+  
+  <!-- Input Text Files -->
+  <rect class="box" x="20" y="120" width="160" height="60"/>
+  <text class="text" x="100" y="155">Input Text Files</text>
+  
+  <!-- Generate Sentence Embeddings -->
+  <rect class="box" x="220" y="120" width="200" height="60"/>
+  <text class="text" x="320" y="145">Generate Sentence</text>
+  <text class="text" x="320" y="165">Embeddings</text>
+  
+  <!-- Calculate Cosine Similarity -->
+  <rect class="box" x="460" y="120" width="200" height="60"/>
+  <text class="text" x="560" y="145">Calculate Cosine</text>
+  <text class="text" x="560" y="165">Similarity</text>
+  
+  <!-- Output Similarity Score -->
+  <rect class="box" x="700" y="120" width="160" height="60"/>
+  <text class="text" x="780" y="145">Output Similarity</text>
+  <text class="text" x="780" y="165">Score</text>
+  
+  <!-- Arrows -->
+  <path class="arrow" d="M180,150 L220,150"/>
+  <path class="arrow" d="M420,150 L460,150"/>
+  <path class="arrow" d="M660,150 L700,150"/>
+</svg>
