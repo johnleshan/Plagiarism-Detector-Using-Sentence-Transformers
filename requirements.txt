@@ -1,1 +1,19 @@
-scikit_learn==0.24.2
+nltk
+numpy
+customtkinter @ git+https://github.com/TomSchimansky/CustomTkinter.git
+python-docx
+PyPDF2
+fpdf
+Pillow
+scikit-learn
+sentence-transformers
+joblib
+beautifulsoup4
+striprtf
+odfpy
+ebooklib
+mobi
+textract
+openpyxl
+ezodf
+python-pptx
