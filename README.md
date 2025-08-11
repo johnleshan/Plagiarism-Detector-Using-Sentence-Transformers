@@ -38,6 +38,7 @@ Detect semantic plagiarism using AI-powered sentence embeddings. This tool compa
    cd Plagiarism-Detector-Using-Sentence-Transformers
 
 2. Install dependencies:
+   ```bash
    pip install -r requirements.txt
 
 
