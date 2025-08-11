@@ -39,6 +39,38 @@ Detect semantic plagiarism using AI-powered sentence embeddings. This tool compa
    pip install -r requirements.txt
 
 
+## Usage
+The Plagiarism Detector features a simple graphical interface that makes detecting plagiarism intuitive. Follow these steps:
+
+Step 1: Upload Files
+Click the "UPLOAD FILES" button to select and upload the documents you want to check for plagiarism.
+
+<p align="center">
+<img src="assets/Upload files.png" alt="Upload Files" width="700">
+</p>
+
+Step 2: Check Plagiarism
+After uploading your files, click "CHECK PLAGIARISM" to begin the analysis. The app will compare your documents against its reference corpus.
+
+<p align="center">
+<img src="assets/Check plagiarism.png" alt="Check Plagiarism" width="700">
+</p>
+
+Step 3: View Results
+Once the analysis is complete, click "SHOW COPIED TEXTS" to see detailed results including similarity scores and specific text matches.
+
+<p align="center">
+<img src="assets/Show copied text.png" alt="Show Results" width="700">
+</p>
+
+Step 4: Export Report
+Generate a comprehensive report of the plagiarism analysis by clicking "EXPORT REPORT". You can choose between PDF and CSV formats.
+
+<p align="center">
+<img src="assets/Export report.png" alt="Export Report" width="700">
+</p>
+
+
 ## How it works
 <p align="center">
 <img src="diagram.svg" alt="Workflow Diagram">
