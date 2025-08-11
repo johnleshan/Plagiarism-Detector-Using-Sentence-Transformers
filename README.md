@@ -34,3 +34,16 @@ Detect semantic plagiarism using AI-powered sentence embeddings. This tool compa
    ```bash
    git clone https://github.com/johnleshan/Plagiarism-Detector-Using-Sentence-Transformers.git
    cd Plagiarism-Detector-Using-Sentence-Transformers
+
+2. Install dependencies:
+   pip install -r requirements.txt
+
+
+<p align="center">
+  How it works
+  <br>
+  graph LR
+    A[Input Text Files] --> B[Generate Sentence Embeddings]
+    B --> C[Calculate Cosine Similarity]
+    C --> D[Output Similarity Score]
+</p>
