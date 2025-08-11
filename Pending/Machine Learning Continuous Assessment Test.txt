@@ -1,0 +1,23 @@
+Machine Learning Continuous Assessment Test (CAT)
+Question 1: (6 marks)
+a) Differentiate between supervised and unsupervised learning. Provide examples of each. (3 marks)
+    b) Explain the concept of overfitting in machine learning models and how it can be mitigated. (3 marks)
+
+Question 2: (8 marks)
+a) Briefly describe the working principles of the following algorithms:
+i. Linear Regression (2 marks)
+ii. K-Nearest Neighbors (2 marks)
+b) Machine learning is used in recommendation systems. Explain how collaborative filtering works in building recommendations. (4 marks)
+
+Question 3: (6 marks)
+a) Discuss the importance of feature scaling in machine learning and compare two common methods used: Min-Max Scaling and Standardization. (3 marks)
+b) Explain the role of training, validation, and test datasets in machine learning projects. (3 marks)
+
+Question 4: (10 marks)
+Case Study Scenario:
+An e-commerce company wants to build a machine learning model to predict customer churn. The company has historical customer data, including demographics, purchase history, customer support interactions, and feedback.
+Tasks:
+a) Identify the type of machine learning problem the company is solving. Justify your answer. (2 marks)
+b) Outline the steps involved in preparing the data for this model. (4 marks)
+c) Recommend two suitable machine learning algorithms for this task and explain why they would be effective. (4 marks)
+
